@@ -1,30 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PV Suitability - Adana</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>PV Suitability – Adana</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-    }
+    body { font-family: Arial, sans-serif; margin: 40px; max-width: 980px; }
+    h1 { margin-bottom: 8px; }
+    .muted { color:#444; }
+    .card { border:1px solid #ddd; border-radius:12px; padding:18px; margin-top:18px; }
+    .row { display:flex; gap:18px; flex-wrap:wrap; }
+    .col { flex:1 1 260px; }
+    label { display:block; font-weight:600; margin:10px 0 6px; }
+    select, input { width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; }
+    .btn { margin-top:14px; padding:12px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; }
+    .btn-primary { background:#111; color:#fff; }
+    .kpi { font-size:20px; font-weight:800; margin:10px 0; }
+    .small { font-size: 13px; color:#555; line-height:1.35; }
+    .pill { display:inline-block; padding:4px 10px; border-radius:999px; background:#f2f2f2; font-size:12px; }
+    hr { border:none; border-top:1px solid #eee; margin:14px 0; }
   </style>
 </head>
+
 <body>
+  <h1>PV Suitability and Energy Potential – Adana</h1>
+  <p class="muted">
+    This prototype estimates annual PV electricity generation using GIS-derived suitable areas and user-selected parameters.
+  </p>
 
-<h1>PV Suitability and Energy Potential – Adana</h1>
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label>1) PV Technology (module efficiency)</label>
+        <select id="tech">
+          <option value="0.131">c-Si (13.1%)</option>
+          <option value="0.079">a-Si (7.9%)</option>
+          <option value="0.088">CdTe (8.8%)</option>
+          <option value="0.084">CIGS (8.4%)</option>
+          <option value="0.263">CPV (26.3%)</option>
+        </select>
 
-<p>
-This web-based prototype estimates annual photovoltaic energy production
-based on GIS-derived suitability classes and user-selected parameters.
-</p>
+        <label>Performance Ratio (PR)</label>
+        <input id="pr" type="number" step="0.01" min="0" max="1" value="0.80" />
+        <div class="small">
+          PR accounts for real-world losses (temperature, inverter, wiring, soiling, downtime). Typical range: 0.75–0.85.
+        </div>
+      </div>
 
-<p>
-Data sources include CLC2018, ASTER GDEM, and solar radiation analysis
-derived in ArcGIS.
-</p>
+      <div class="col">
+        <label>2) Which suitability classes to use?</label>
+        <select id="classChoice">
+          <option value="high">Highly suitable only</option>
+          <option value="high+mod">Highly + Moderately suitable</option>
+        </select>
 
-<p><b>Status:</b> Prototype for academic use</p>
+        <label>3) Coverage ratio (% of selected land used for PV)</label>
+        <input id="coverage" type="number" step="1" min="0" max="100" value="10" />
+        <div class="small">
+          This is a scenario input. Example: 5% or 10% of suitable land is assumed to be developed as PV sites.
+        </div>
+      </div>
+
+      <div class="col">
+        <label>Household consumption (kWh/year) for “How many buildings?”</label>
+        <input id="hh" type="number" step="100" min="500" value="3500" />
+        <div class="small">
+          This is a simple indicator, not an official grid planning result.
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
+
+    <hr/>
+
+    <div>
+      <div class="pill">Formula</div>
+      <div class="small">
+        Energy (kWh/year) = SR (kWh/m²/year) × Area (m²) × Coverage × Efficiency × PR
+      </div>
+    </div>
+
+    <div id="out" class="card" style="margin-top:14px; background:#fafafa;"></div>
+  </div>
+
+  <div class="small" style="margin-top:14px;">
+    Data sources include CLC2018, ASTER GDEM, and ArcGIS Solar Radiation outputs. This is an academic prototype.
+  </div>
+
+<script>
+/**
+ * === GIS INPUTS (YOU WILL REPLACE THESE) ===
+ * Put your GIS-derived values here (restriction applied).
+ * Units:
+ *  - Area: km²
+ *  - SR: kWh/m²/year (annual total solar radiation)
+ */
+const GIS = {
+  A_high_km2: 1508.2,      // TODO: replace with Adana value
+  A_mod_km2: 800.0,        // TODO: replace with Adana value
+  SR_high_mean: 2623,      // TODO: replace with Adana mean SR for HIGH
+  SR_mod_mean: 2400        // TODO: replace with Adana mean SR for MOD
+};
+
+function km2_to_m2(km2){ return km2 * 1_000_000; }
+
+function fmtNumber(x){
+  return x.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function calculate(){
+  const eff = parseFloat(document.getElementById("tech").value);
+  const pr  = parseFloat(document.getElementById("pr").value);
+  const cov = parseFloat(document.getElementById("coverage").value) / 100.0;
+  const choice = document.getElementById("classChoice").value;
+  const hh = parseFloat(document.getElementById("hh").value);
+
+  // Basic validation
+  if (isNaN(eff) || isNaN(pr) || isNaN(cov) || isNaN(hh)) {
+    alert("Please check inputs.");
+    return;
+  }
+  if (pr <= 0 || pr > 1) {
+    alert("PR should be between 0 and 1 (e.g., 0.80).");
+    return;
+  }
+  if (cov < 0 || cov > 1) {
+    alert("Coverage must be between 0 and 100.");
+    return;
+  }
+
+  let area_m2 = km2_to_m2(GIS.A_high_km2);
+  let sr = GIS.SR_high_mean;
+
+  if (choice === "high+mod") {
+    // Area-weighted mean SR
+    const Ah = GIS.A_high_km2, Am = GIS.A_mod_km2;
+    const totalA = Ah + Am;
+    sr = (GIS.SR_high_mean * Ah + GIS.SR_mod_mean * Am) / (totalA || 1);
+    area_m2 = km2_to_m2(totalA);
+  }
+
+  const used_area_m2 = area_m2 * cov;
+  const energy_kwh = sr * used_area_m2 * eff * pr;
+  const buildings = energy_kwh / (hh || 1);
+
+  const out = document.getElementById("out");
+  out.innerHTML = `
+    <div class="kpi">Estimated annual generation: ${fmtNumber(energy_kwh)} kWh/year</div>
+    <div class="kpi">Equivalent households/buildings: ${fmtNumber(buildings)}</div>
+    <div class="small">
+      <b>Inputs used:</b><br/>
+      - Selected land area: ${choice === "high" ? GIS.A_high_km2 : (GIS.A_high_km2 + GIS.A_mod_km2)} km²<br/>
+      - Coverage: ${(cov*100).toFixed(0)}% → Used PV area: ${fmtNumber(used_area_m2)} m²<br/>
+      - Mean solar radiation (SR): ${sr.toFixed(0)} kWh/m²/year<br/>
+      - Efficiency: ${(eff*100).toFixed(1)}%<br/>
+      - PR: ${pr.toFixed(2)}<br/>
+      - Household consumption: ${fmtNumber(hh)} kWh/year
+    </div>
+  `;
+}
+
+// Auto-run once
+calculate();
+</script>
 
 </body>
 </html>
