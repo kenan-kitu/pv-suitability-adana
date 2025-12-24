@@ -3,20 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>PV Suitability – Adana (V2)</title>
-
-  <!-- Leaflet -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+  <title>PV Suitability – Adana (V3)</title>
 
   <style>
     :root{
@@ -26,143 +13,98 @@
       --text:#e9eefc;
       --muted:#b8c2e0;
       --line:rgba(255,255,255,.10);
-      --accent:#5eead4;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text);
-    }
-    .wrap{
-      max-width: 1200px; margin: 0 auto; padding: 22px;
-    }
-    h1{margin:0 0 8px 0; font-size: 24px;}
-    .sub{color:var(--muted); margin:0 0 18px 0; line-height:1.4;}
-    .grid{
-      display:grid;
-      grid-template-columns: 380px 1fr;
-      gap:18px;
-      align-items: stretch;
-    }
+    body{margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text);}
+    .wrap{max-width:1200px; margin:0 auto; padding:22px;}
+    h1{margin:0 0 8px 0; font-size:24px;}
+    .sub{color:var(--muted); margin:0 0 18px 0; line-height:1.45;}
+    .grid{display:grid; grid-template-columns:380px 1fr; gap:18px;}
     .panel{
-      background: linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
+      background:linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
       border:1px solid var(--line);
       border-radius:16px;
       padding:16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+      box-shadow:0 10px 25px rgba(0,0,0,.25);
     }
-    label{display:block; font-weight:700; margin:12px 0 6px;}
-    select, input[type="range"]{
-      width:100%;
-    }
+    label{display:block; font-weight:800; margin:12px 0 6px;}
+    select, input[type="range"]{width:100%;}
     select{
-      padding:10px; border-radius:12px;
-      border:1px solid var(--line);
+      padding:10px; border-radius:12px; border:1px solid var(--line);
       background:#0a1326; color:var(--text);
     }
     .row{display:flex; gap:10px; align-items:center;}
-    .small{font-size:12px; color:var(--muted); line-height:1.4}
+    .small{font-size:12px; color:var(--muted); line-height:1.45;}
     .btn{
-      width:100%;
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:12px;
-      border:0;
-      background:#ffffff;
-      color:#0a0f1a;
-      font-weight:900;
-      cursor:pointer;
+      width:100%; margin-top:14px; padding:12px 14px;
+      border-radius:12px; border:0; background:#ffffff; color:#0a0f1a;
+      font-weight:900; cursor:pointer;
     }
-    .kpis{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:14px;
-    }
+    .kpis{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
     .kpi{
       border:1px solid var(--line);
       border-radius:14px;
       padding:12px;
-      background: rgba(255,255,255,.03);
+      background:rgba(255,255,255,.03);
       min-height:72px;
     }
     .kpi .t{font-size:12px; color:var(--muted);}
     .kpi .v{font-size:18px; font-weight:900; margin-top:6px;}
-    .kpi.full{grid-column: 1 / span 2;}
+    .kpi.full{grid-column:1 / span 2;}
     .hr{height:1px; background:var(--line); margin:14px 0;}
     .pill{
       display:inline-block; padding:4px 10px; border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
+      border:1px solid var(--line); background:rgba(255,255,255,.04);
       font-size:12px; color:var(--muted);
     }
 
-    /* Map */
-    .mapPanel{
-      position:relative;
-      overflow:hidden;
-      padding:0;
-    }
-    #map{
-      width:100%;
-      height: 720px;
+    /* Right side images */
+    .rightTop{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;}
+    .titleBlock h2{margin:0; font-size:16px;}
+    .titleBlock .small{margin-top:6px;}
+    .imgStack{display:flex; flex-direction:column; gap:14px; margin-top:12px;}
+    .imgCard{
+      border:1px solid var(--line);
       border-radius:16px;
+      overflow:hidden;
+      background:rgba(255,255,255,.03);
     }
-
-    /* Map controls overlay */
-    .mapControls{
-      position:absolute;
-      top:12px; left:12px;
-      z-index: 1000;
-      width: 320px;
-      background: rgba(10,19,38,.92);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      backdrop-filter: blur(6px);
+    .imgHead{
+      padding:12px 12px 10px 12px;
+      border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      align-items:center;
     }
-    .mapControls h3{
-      margin:0 0 8px 0;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .layerItem{
-      border:1px solid var(--line);
+    .imgHead .h{font-weight:900;}
+    .imgHead .meta{font-size:12px; color:var(--muted);}
+    .imgWrap{padding:12px;}
+    img{
+      width:100%;
+      height:auto;
+      display:block;
       border-radius:12px;
-      padding:10px;
-      margin-top:10px;
-      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
     }
-    .layerTop{
-      display:flex; justify-content:space-between; align-items:center;
-      gap:10px;
-    }
-    .toggle{
-      display:flex; align-items:center; gap:8px;
-      font-size:13px; color:var(--text);
-    }
-    .toggle input{transform: scale(1.1);}
     .legend{
       margin-top:10px;
       border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px;
-      background: rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.03);
     }
-    .legendTitle{font-weight:800; font-size:13px; margin-bottom:8px;}
+    .legendTitle{font-weight:900; font-size:13px; margin-bottom:8px;}
     .legRow{display:flex; align-items:center; gap:8px; margin:6px 0; font-size:12px; color:var(--muted);}
     .swatch{width:12px; height:12px; border-radius:3px; border:1px solid rgba(255,255,255,.25);}
 
     @media (max-width: 980px){
-      .grid{grid-template-columns: 1fr;}
-      #map{height:520px;}
-      .mapControls{width: calc(100% - 24px);}
+      .grid{grid-template-columns:1fr;}
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <h1>PV Suitability & Energy Potential – Adana (Prototype V2)</h1>
+    <h1>PV Suitability & Energy Potential – Adana (Prototype)</h1>
     <p class="sub">
       Users explore PV scenarios by selecting PV technology, suitable class group, and coverage ratio.
       PR, household demand, and grid emission factor are fixed assumptions for clarity.
@@ -186,7 +128,6 @@
         <select id="classChoice">
           <option value="high">Highly suitable only</option>
           <option value="high+mod">Highly + Moderately suitable</option>
-          <option value="high+mod+low">Highly + Moderately + Low suitable</option>
         </select>
 
         <label>3) Coverage ratio (how much of selected land is developed as PV)</label>
@@ -196,7 +137,9 @@
             <span id="covLabel">10</span>%
           </div>
         </div>
-        <div class="small">Tip: Keep it realistic (e.g., 5–10%). Slider is capped at 30% to avoid unrealistic outputs.</div>
+        <div class="small">
+          Coverage is a scenario input. Slider capped at 30% to avoid unrealistic outcomes.
+        </div>
 
         <button class="btn" onclick="calculate()">Calculate</button>
 
@@ -223,8 +166,8 @@
           </div>
 
           <div class="kpi">
-            <div class="t">Households served (indicator)</div>
-            <div class="v" id="k_hh">—</div>
+            <div class="t">Buildings served (indicator)</div>
+            <div class="v" id="k_build">—</div>
           </div>
           <div class="kpi">
             <div class="t">Avoided CO₂ (indicator)</div>
@@ -251,107 +194,87 @@
       </div>
 
       <!-- RIGHT -->
-      <div class="panel mapPanel">
-        <div id="map"></div>
-
-        <div class="mapControls">
-          <h3>Map layers</h3>
-
-          <div class="layerItem">
-            <div class="layerTop">
-              <div class="toggle">
-                <input id="togSuit" type="checkbox" checked />
-                <span>Final Suitability Map (PNG)</span>
-              </div>
-            </div>
-            <label class="small" style="margin:10px 0 6px;">Opacity</label>
-            <input id="opSuit" type="range" min="0" max="100" value="75" />
+      <div class="panel">
+        <div class="rightTop">
+          <div class="titleBlock">
+            <h2>PV Suitability (Final) — Adana</h2>
+            <div class="small">Visual overlays (PNG) shown for reference. No interactive drawing.</div>
           </div>
-
-          <div class="layerItem">
-            <div class="layerTop">
-              <div class="toggle">
-                <input id="togRad" type="checkbox" />
-                <span>Solar Radiation Map (PNG)</span>
-              </div>
-            </div>
-            <label class="small" style="margin:10px 0 6px;">Opacity</label>
-            <input id="opRad" type="range" min="0" max="100" value="60" />
-          </div>
-
-          <div class="legend">
-            <div class="legendTitle">Suitability Classes (Final) — class index</div>
-            <div class="small" style="margin-bottom:8px;">
-              Unit: <b>categorical</b> (0–3). Title: <b>PV Suitability (Adana)</b>
-            </div>
-            <div class="legRow"><span class="swatch" style="background:#ffffff;"></span> NoData / Restricted</div>
-            <div class="legRow"><span class="swatch" style="background:#e74c3c;"></span> 0 — Not suitable / Restricted</div>
-            <div class="legRow"><span class="swatch" style="background:#f1c40f;"></span> 1 — Low suitable</div>
-            <div class="legRow"><span class="swatch" style="background:#2ecc71;"></span> 2 — Moderately suitable</div>
-            <div class="legRow"><span class="swatch" style="background:#00bcd4;"></span> 3 — Highly suitable</div>
-          </div>
-
-          <div class="small" style="margin-top:10px;">
-            If overlays look shifted: update <b>imageBounds</b> to match your raster extent in EPSG:4326.
+          <div class="small">
+            Adana building count (reference): <b>73.992</b>
           </div>
         </div>
+
+        <div class="imgStack">
+          <div class="imgCard">
+            <div class="imgHead">
+              <div class="h">Final Suitability Map (Raster)</div>
+              <div class="meta">Legend: categorical classes (0–3)</div>
+            </div>
+            <div class="imgWrap">
+              <img src="assets/suitability.png" alt="Adana PV Suitability Raster"/>
+              <div class="legend">
+                <div class="legendTitle">Legend — PV Suitability Classes</div>
+                <div class="small" style="margin-bottom:8px;">
+                  Title: <b>PV Suitability (Adana)</b> · Unit: <b>categorical index</b>
+                </div>
+                <div class="legRow"><span class="swatch" style="background:#ffffff;"></span> NoData / Restricted</div>
+                <div class="legRow"><span class="swatch" style="background:#e74c3c;"></span> 0 — Not suitable / Restricted</div>
+                <div class="legRow"><span class="swatch" style="background:#f1c40f;"></span> 1 — Low suitable</div>
+                <div class="legRow"><span class="swatch" style="background:#2ecc71;"></span> 2 — Moderately suitable</div>
+                <div class="legRow"><span class="swatch" style="background:#00bcd4;"></span> 3 — Highly suitable</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="imgCard">
+            <div class="imgHead">
+              <div class="h">Solar Radiation Map (Raster)</div>
+              <div class="meta">Unit: kWh/m²/year (annual)</div>
+            </div>
+            <div class="imgWrap">
+              <img src="assets/radiation.png" alt="Adana Solar Radiation Raster"/>
+              <div class="small" style="margin-top:10px;">
+                Mean SR values used in calculations (by suitability zone):<br/>
+                <b>Highly:</b> 1406.75546808 · <b>Moderately:</b> 1359.54816032
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
 <script>
 /**
- * ===========================
- * 1) GIS NUMERIC INPUTS
- * Replace with YOUR Adana values (restriction applied).
+ * ===== GIS INPUTS (UPDATE IF NEEDED) =====
+ * Areas should come from your GIS.
  * Units:
- * - Areas: km²
+ * - Area: km²
  * - SR mean: kWh/m²/year
- * ===========================
+ *
+ * LOW is removed by request: no low in model.
  */
 const GIS = {
-  A_high_km2: 1406.75546808,
-  A_mod_km2: 1359.54816032,
-  A_low_km2: 1372.18918777,
+  // TODO: Replace with your real areas from GIS (km²)
+  A_high_km2: 1500.0,
+  A_mod_km2: 800.0,
 
-  SR_high_mean: 1406.75546808, // <-- replace with your mean SR for HIGH (kWh/m²/year)
-  SR_mod_mean: 1359.54816032,  // <-- replace with your mean SR for MOD
-  SR_low_mean: 1372.18918777   // <-- replace with your mean SR for LOW
+  // Given SR means (kWh/m²/year)
+  SR_high_mean: 1406.75546808,
+  SR_mod_mean: 1359.54816032
 };
 
 /**
- * ===========================
- * 2) FIXED ASSUMPTIONS (hidden)
- * - PR: Performance Ratio
- * - HH: household demand (kWh/year)
- * - EF: grid emission factor (kgCO2/kWh)
- * ===========================
+ * ===== Fixed assumptions (hidden from user) =====
+ * You can tune these later, but keep them fixed in UI.
  */
 const FIXED = {
   PR: 0.80,
-  HH_KWH_YEAR: 3500,
-  GRID_EF_KGCO2_PER_KWH: 0.45
-};
-
-/**
- * ===========================
- * 3) MAP DATA (PNG overlays)
- * Put your PNGs inside the repo, e.g. /data/
- * Then set paths below.
- *
- * IMPORTANT: imageBounds MUST be in EPSG:4326 [ [south, west], [north, east] ].
- * You can read extent in QGIS:
- * Layer Properties -> Information -> Extent (in EPSG:4326)
- * ===========================
- */
-const DATA = {
-  suitabilityPng: "data/suitability.png",  // TODO: change
-  radiationPng:   "data/radiation.png",    // TODO: change
-
-  // TODO: Replace with your raster extent in EPSG:4326
-  // Example bounds format:
-  // [[36.8, 34.8], [38.7, 36.7]]
-  imageBounds: [[36.6, 34.5], [38.2, 36.8]]
+  BUILDING_KWH_YEAR: 3500,       // proxy demand per building/year (kept fixed)
+  GRID_EF_KGCO2_PER_KWH: 0.45,   // emission factor
+  ADANA_BUILDING_COUNT: 73992
 };
 
 function km2_to_m2(km2){ return km2 * 1_000_000; }
@@ -359,41 +282,10 @@ function fmt(x, digits=0){
   return x.toLocaleString(undefined, { maximumFractionDigits: digits });
 }
 
-/**
- * ===========================
- * CALCULATION
- * ===========================
- */
-function weightedMeanSR(pairs){
-  // pairs: [{sr, area}, ...]
-  const totalA = pairs.reduce((s,p)=>s+p.area, 0);
-  if (!totalA) return 0;
-  return pairs.reduce((s,p)=>s + p.sr*p.area, 0) / totalA;
-}
-
-function getSelectedAreaAndSR(choice){
-  if (choice === "high"){
-    return {
-      area_km2: GIS.A_high_km2,
-      sr: GIS.SR_high_mean
-    };
-  }
-  if (choice === "high+mod"){
-    const area_km2 = GIS.A_high_km2 + GIS.A_mod_km2;
-    const sr = weightedMeanSR([
-      { sr: GIS.SR_high_mean, area: GIS.A_high_km2 },
-      { sr: GIS.SR_mod_mean,  area: GIS.A_mod_km2  }
-    ]);
-    return { area_km2, sr };
-  }
-  // high+mod+low
-  const area_km2 = GIS.A_high_km2 + GIS.A_mod_km2 + GIS.A_low_km2;
-  const sr = weightedMeanSR([
-    { sr: GIS.SR_high_mean, area: GIS.A_high_km2 },
-    { sr: GIS.SR_mod_mean,  area: GIS.A_mod_km2  },
-    { sr: GIS.SR_low_mean,  area: GIS.A_low_km2  }
-  ]);
-  return { area_km2, sr };
+function weightedMeanSR(Ah, Am, SRh, SRm){
+  const total = Ah + Am;
+  if (!total) return 0;
+  return (SRh*Ah + SRm*Am) / total;
 }
 
 function calculate(){
@@ -401,33 +293,44 @@ function calculate(){
   const choice = document.getElementById("classChoice").value;
   const cov = parseFloat(document.getElementById("coverage").value) / 100;
 
-  const { area_km2, sr } = getSelectedAreaAndSR(choice);
+  let area_km2 = GIS.A_high_km2;
+  let sr = GIS.SR_high_mean;
+
+  if (choice === "high+mod"){
+    area_km2 = GIS.A_high_km2 + GIS.A_mod_km2;
+    sr = weightedMeanSR(GIS.A_high_km2, GIS.A_mod_km2, GIS.SR_high_mean, GIS.SR_mod_mean);
+  }
+
   const area_m2 = km2_to_m2(area_km2);
   const used_m2 = area_m2 * cov;
 
   const energy_kwh = sr * used_m2 * eff * FIXED.PR;
-  const households = energy_kwh / (FIXED.HH_KWH_YEAR || 1);
+
+  // Buildings served indicator + share of Adana buildings
+  const buildings_served = energy_kwh / (FIXED.BUILDING_KWH_YEAR || 1);
+  const pct_of_adana = (buildings_served / (FIXED.ADANA_BUILDING_COUNT || 1)) * 100;
+
   const avoided_kg = energy_kwh * FIXED.GRID_EF_KGCO2_PER_KWH;
 
   document.getElementById("k_area").innerText  = `${fmt(area_km2,2)} km²`;
   document.getElementById("k_used").innerText  = `${fmt(used_m2,0)} m²`;
   document.getElementById("k_sr").innerText    = `${fmt(sr,0)} kWh/m²/year`;
   document.getElementById("k_energy").innerText= `${fmt(energy_kwh,0)} kWh/year`;
-  document.getElementById("k_hh").innerText    = `${fmt(households,0)} households/year`;
+
+  document.getElementById("k_build").innerText =
+    `${fmt(buildings_served,0)} buildings/year (${fmt(pct_of_adana,2)}% of Adana)`;
+
   document.getElementById("k_co2").innerText   = `${fmt(avoided_kg,0)} kgCO₂/year`;
 
   document.getElementById("assumptions").innerHTML = `
-    PR = <b>${FIXED.PR.toFixed(2)}</b> (system losses) ·
-    Household demand = <b>${fmt(FIXED.HH_KWH_YEAR,0)}</b> kWh/year ·
-    Grid EF = <b>${FIXED.GRID_EF_KGCO2_PER_KWH.toFixed(2)}</b> kgCO₂/kWh
+    PR = <b>${FIXED.PR.toFixed(2)}</b> ·
+    Demand proxy = <b>${fmt(FIXED.BUILDING_KWH_YEAR,0)}</b> kWh/building/year ·
+    Grid EF = <b>${FIXED.GRID_EF_KGCO2_PER_KWH.toFixed(2)}</b> kgCO₂/kWh ·
+    Adana buildings = <b>${fmt(FIXED.ADANA_BUILDING_COUNT,0)}</b>
   `;
 }
 
-/**
- * ===========================
- * UI: Coverage label
- * ===========================
- */
+// Coverage label live
 const covEl = document.getElementById("coverage");
 const covLabel = document.getElementById("covLabel");
 covEl.addEventListener("input", () => {
@@ -435,51 +338,9 @@ covEl.addEventListener("input", () => {
   calculate();
 });
 
-/**
- * ===========================
- * MAP: Leaflet base + PNG overlays
- * ===========================
- */
-const map = L.map("map", { zoomControl: true }).setView([37.0, 35.3], 8);
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
-
-const bounds = L.latLngBounds(DATA.imageBounds);
-
-const suitOverlay = L.imageOverlay(DATA.suitabilityPng, bounds, { opacity: 0.75 });
-const radOverlay  = L.imageOverlay(DATA.radiationPng, bounds, { opacity: 0.60 });
-
-// default: suitability ON, radiation OFF
-suitOverlay.addTo(map);
-map.fitBounds(bounds);
-
-/**
- * Layer toggles + opacity controls
- */
-const togSuit = document.getElementById("togSuit");
-const togRad  = document.getElementById("togRad");
-const opSuit  = document.getElementById("opSuit");
-const opRad   = document.getElementById("opRad");
-
-togSuit.addEventListener("change", () => {
-  if (togSuit.checked) suitOverlay.addTo(map);
-  else map.removeLayer(suitOverlay);
-});
-togRad.addEventListener("change", () => {
-  if (togRad.checked) radOverlay.addTo(map);
-  else map.removeLayer(radOverlay);
-});
-
-opSuit.addEventListener("input", () => suitOverlay.setOpacity(parseInt(opSuit.value,10)/100));
-opRad.addEventListener("input", () => radOverlay.setOpacity(parseInt(opRad.value,10)/100));
-
-/**
- * First compute
- */
+// Initial
 calculate();
 </script>
+
 </body>
 </html>
