@@ -3,34 +3,176 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>PV Suitability – Adana</title>
+  <title>PV Suitability – Adana (V2)</title>
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; max-width: 980px; }
-    h1 { margin-bottom: 8px; }
-    .muted { color:#444; }
-    .card { border:1px solid #ddd; border-radius:12px; padding:18px; margin-top:18px; }
-    .row { display:flex; gap:18px; flex-wrap:wrap; }
-    .col { flex:1 1 260px; }
-    label { display:block; font-weight:600; margin:10px 0 6px; }
-    select, input { width:100%; padding:10px; border-radius:10px; border:1px solid #ccc; }
-    .btn { margin-top:14px; padding:12px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; }
-    .btn-primary { background:#111; color:#fff; }
-    .kpi { font-size:20px; font-weight:800; margin:10px 0; }
-    .small { font-size: 13px; color:#555; line-height:1.35; }
-    .pill { display:inline-block; padding:4px 10px; border-radius:999px; background:#f2f2f2; font-size:12px; }
-    hr { border:none; border-top:1px solid #eee; margin:14px 0; }
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --card2:#101f36;
+      --text:#e9eefc;
+      --muted:#b8c2e0;
+      --line:rgba(255,255,255,.10);
+      --accent:#5eead4;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text);
+    }
+    .wrap{
+      max-width: 1200px; margin: 0 auto; padding: 22px;
+    }
+    h1{margin:0 0 8px 0; font-size: 24px;}
+    .sub{color:var(--muted); margin:0 0 18px 0; line-height:1.4;}
+    .grid{
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:18px;
+      align-items: stretch;
+    }
+    .panel{
+      background: linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+    label{display:block; font-weight:700; margin:12px 0 6px;}
+    select, input[type="range"]{
+      width:100%;
+    }
+    select{
+      padding:10px; border-radius:12px;
+      border:1px solid var(--line);
+      background:#0a1326; color:var(--text);
+    }
+    .row{display:flex; gap:10px; align-items:center;}
+    .small{font-size:12px; color:var(--muted); line-height:1.4}
+    .btn{
+      width:100%;
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      border:0;
+      background:#ffffff;
+      color:#0a0f1a;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:14px;
+    }
+    .kpi{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(255,255,255,.03);
+      min-height:72px;
+    }
+    .kpi .t{font-size:12px; color:var(--muted);}
+    .kpi .v{font-size:18px; font-weight:900; margin-top:6px;}
+    .kpi.full{grid-column: 1 / span 2;}
+    .hr{height:1px; background:var(--line); margin:14px 0;}
+    .pill{
+      display:inline-block; padding:4px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-size:12px; color:var(--muted);
+    }
+
+    /* Map */
+    .mapPanel{
+      position:relative;
+      overflow:hidden;
+      padding:0;
+    }
+    #map{
+      width:100%;
+      height: 720px;
+      border-radius:16px;
+    }
+
+    /* Map controls overlay */
+    .mapControls{
+      position:absolute;
+      top:12px; left:12px;
+      z-index: 1000;
+      width: 320px;
+      background: rgba(10,19,38,.92);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      backdrop-filter: blur(6px);
+    }
+    .mapControls h3{
+      margin:0 0 8px 0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .layerItem{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      margin-top:10px;
+      background: rgba(255,255,255,.03);
+    }
+    .layerTop{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+    }
+    .toggle{
+      display:flex; align-items:center; gap:8px;
+      font-size:13px; color:var(--text);
+    }
+    .toggle input{transform: scale(1.1);}
+    .legend{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      background: rgba(255,255,255,.03);
+    }
+    .legendTitle{font-weight:800; font-size:13px; margin-bottom:8px;}
+    .legRow{display:flex; align-items:center; gap:8px; margin:6px 0; font-size:12px; color:var(--muted);}
+    .swatch{width:12px; height:12px; border-radius:3px; border:1px solid rgba(255,255,255,.25);}
+
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+      #map{height:520px;}
+      .mapControls{width: calc(100% - 24px);}
+    }
   </style>
 </head>
 
 <body>
-  <h1>PV Suitability and Energy Potential – Adana</h1>
-  <p class="muted">
-    This prototype estimates annual PV electricity generation using GIS-derived suitable areas and user-selected parameters.
-  </p>
+  <div class="wrap">
+    <h1>PV Suitability & Energy Potential – Adana (Prototype V2)</h1>
+    <p class="sub">
+      Users explore PV scenarios by selecting PV technology, suitable class group, and coverage ratio.
+      PR, household demand, and grid emission factor are fixed assumptions for clarity.
+    </p>
 
-  <div class="card">
-    <div class="row">
-      <div class="col">
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="panel">
+        <div class="pill">Inputs</div>
+
         <label>1) PV Technology (module efficiency)</label>
         <select id="tech">
           <option value="0.131">c-Si (13.1%)</option>
@@ -40,130 +182,304 @@
           <option value="0.263">CPV (26.3%)</option>
         </select>
 
-        <label>Performance Ratio (PR)</label>
-        <input id="pr" type="number" step="0.01" min="0" max="1" value="0.80" />
-        <div class="small">
-          PR accounts for real-world losses (temperature, inverter, wiring, soiling, downtime). Typical range: 0.75–0.85.
-        </div>
-      </div>
-
-      <div class="col">
-        <label>2) Which suitability classes to use?</label>
+        <label>2) Suitability class selection</label>
         <select id="classChoice">
           <option value="high">Highly suitable only</option>
           <option value="high+mod">Highly + Moderately suitable</option>
+          <option value="high+mod+low">Highly + Moderately + Low suitable</option>
         </select>
 
-        <label>3) Coverage ratio (% of selected land used for PV)</label>
-        <input id="coverage" type="number" step="1" min="0" max="100" value="10" />
+        <label>3) Coverage ratio (how much of selected land is developed as PV)</label>
+        <div class="row">
+          <input id="coverage" type="range" min="0" max="30" value="10" />
+          <div style="min-width:64px; text-align:right; font-weight:900;">
+            <span id="covLabel">10</span>%
+          </div>
+        </div>
+        <div class="small">Tip: Keep it realistic (e.g., 5–10%). Slider is capped at 30% to avoid unrealistic outputs.</div>
+
+        <button class="btn" onclick="calculate()">Calculate</button>
+
+        <div class="hr"></div>
+        <div class="pill">Results</div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t">Selected land area</div>
+            <div class="v" id="k_area">—</div>
+          </div>
+          <div class="kpi">
+            <div class="t">PV-developed area</div>
+            <div class="v" id="k_used">—</div>
+          </div>
+
+          <div class="kpi">
+            <div class="t">Solar radiation used (mean)</div>
+            <div class="v" id="k_sr">—</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Annual generation</div>
+            <div class="v" id="k_energy">—</div>
+          </div>
+
+          <div class="kpi">
+            <div class="t">Households served (indicator)</div>
+            <div class="v" id="k_hh">—</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Avoided CO₂ (indicator)</div>
+            <div class="v" id="k_co2">—</div>
+          </div>
+
+          <div class="kpi full">
+            <div class="t">Assumptions (fixed)</div>
+            <div class="small" id="assumptions"></div>
+          </div>
+
+          <div class="kpi full">
+            <div class="t">Formula</div>
+            <div class="small">
+              Energy (kWh/year) = SR (kWh/m²/year) × Area(m²) × Coverage × Efficiency × PR
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
         <div class="small">
-          This is a scenario input. Example: 5% or 10% of suitable land is assumed to be developed as PV sites.
+          GIS sources: CLC2018, ASTER GDEM, ArcGIS Solar Radiation outputs. Academic prototype.
         </div>
       </div>
 
-      <div class="col">
-        <label>Household consumption (kWh/year) for “How many buildings?”</label>
-        <input id="hh" type="number" step="100" min="500" value="3500" />
-        <div class="small">
-          This is a simple indicator, not an official grid planning result.
+      <!-- RIGHT -->
+      <div class="panel mapPanel">
+        <div id="map"></div>
+
+        <div class="mapControls">
+          <h3>Map layers</h3>
+
+          <div class="layerItem">
+            <div class="layerTop">
+              <div class="toggle">
+                <input id="togSuit" type="checkbox" checked />
+                <span>Final Suitability Map (PNG)</span>
+              </div>
+            </div>
+            <label class="small" style="margin:10px 0 6px;">Opacity</label>
+            <input id="opSuit" type="range" min="0" max="100" value="75" />
+          </div>
+
+          <div class="layerItem">
+            <div class="layerTop">
+              <div class="toggle">
+                <input id="togRad" type="checkbox" />
+                <span>Solar Radiation Map (PNG)</span>
+              </div>
+            </div>
+            <label class="small" style="margin:10px 0 6px;">Opacity</label>
+            <input id="opRad" type="range" min="0" max="100" value="60" />
+          </div>
+
+          <div class="legend">
+            <div class="legendTitle">Suitability Classes (Final) — class index</div>
+            <div class="small" style="margin-bottom:8px;">
+              Unit: <b>categorical</b> (0–3). Title: <b>PV Suitability (Adana)</b>
+            </div>
+            <div class="legRow"><span class="swatch" style="background:#ffffff;"></span> NoData / Restricted</div>
+            <div class="legRow"><span class="swatch" style="background:#e74c3c;"></span> 0 — Not suitable / Restricted</div>
+            <div class="legRow"><span class="swatch" style="background:#f1c40f;"></span> 1 — Low suitable</div>
+            <div class="legRow"><span class="swatch" style="background:#2ecc71;"></span> 2 — Moderately suitable</div>
+            <div class="legRow"><span class="swatch" style="background:#00bcd4;"></span> 3 — Highly suitable</div>
+          </div>
+
+          <div class="small" style="margin-top:10px;">
+            If overlays look shifted: update <b>imageBounds</b> to match your raster extent in EPSG:4326.
+          </div>
         </div>
       </div>
     </div>
-
-    <button class="btn btn-primary" onclick="calculate()">Calculate</button>
-
-    <hr/>
-
-    <div>
-      <div class="pill">Formula</div>
-      <div class="small">
-        Energy (kWh/year) = SR (kWh/m²/year) × Area (m²) × Coverage × Efficiency × PR
-      </div>
-    </div>
-
-    <div id="out" class="card" style="margin-top:14px; background:#fafafa;"></div>
-  </div>
-
-  <div class="small" style="margin-top:14px;">
-    Data sources include CLC2018, ASTER GDEM, and ArcGIS Solar Radiation outputs. This is an academic prototype.
   </div>
 
 <script>
 /**
- * === GIS INPUTS (YOU WILL REPLACE THESE) ===
- * Put your GIS-derived values here (restriction applied).
+ * ===========================
+ * 1) GIS NUMERIC INPUTS
+ * Replace with YOUR Adana values (restriction applied).
  * Units:
- *  - Area: km²
- *  - SR: kWh/m²/year (annual total solar radiation)
+ * - Areas: km²
+ * - SR mean: kWh/m²/year
+ * ===========================
  */
 const GIS = {
-  A_high_km2: 1508.2,      // TODO: replace with Adana value
-  A_mod_km2: 800.0,        // TODO: replace with Adana value
-  SR_high_mean: 2623,      // TODO: replace with Adana mean SR for HIGH
-  SR_mod_mean: 2400        // TODO: replace with Adana mean SR for MOD
+  A_high_km2: 1406.75546808,
+  A_mod_km2: 1359.54816032,
+  A_low_km2: 1372.18918777,
+
+  SR_high_mean: 1406.75546808, // <-- replace with your mean SR for HIGH (kWh/m²/year)
+  SR_mod_mean: 1359.54816032,  // <-- replace with your mean SR for MOD
+  SR_low_mean: 1372.18918777   // <-- replace with your mean SR for LOW
+};
+
+/**
+ * ===========================
+ * 2) FIXED ASSUMPTIONS (hidden)
+ * - PR: Performance Ratio
+ * - HH: household demand (kWh/year)
+ * - EF: grid emission factor (kgCO2/kWh)
+ * ===========================
+ */
+const FIXED = {
+  PR: 0.80,
+  HH_KWH_YEAR: 3500,
+  GRID_EF_KGCO2_PER_KWH: 0.45
+};
+
+/**
+ * ===========================
+ * 3) MAP DATA (PNG overlays)
+ * Put your PNGs inside the repo, e.g. /data/
+ * Then set paths below.
+ *
+ * IMPORTANT: imageBounds MUST be in EPSG:4326 [ [south, west], [north, east] ].
+ * You can read extent in QGIS:
+ * Layer Properties -> Information -> Extent (in EPSG:4326)
+ * ===========================
+ */
+const DATA = {
+  suitabilityPng: "data/suitability.png",  // TODO: change
+  radiationPng:   "data/radiation.png",    // TODO: change
+
+  // TODO: Replace with your raster extent in EPSG:4326
+  // Example bounds format:
+  // [[36.8, 34.8], [38.7, 36.7]]
+  imageBounds: [[36.6, 34.5], [38.2, 36.8]]
 };
 
 function km2_to_m2(km2){ return km2 * 1_000_000; }
+function fmt(x, digits=0){
+  return x.toLocaleString(undefined, { maximumFractionDigits: digits });
+}
 
-function fmtNumber(x){
-  return x.toLocaleString(undefined, { maximumFractionDigits: 0 });
+/**
+ * ===========================
+ * CALCULATION
+ * ===========================
+ */
+function weightedMeanSR(pairs){
+  // pairs: [{sr, area}, ...]
+  const totalA = pairs.reduce((s,p)=>s+p.area, 0);
+  if (!totalA) return 0;
+  return pairs.reduce((s,p)=>s + p.sr*p.area, 0) / totalA;
+}
+
+function getSelectedAreaAndSR(choice){
+  if (choice === "high"){
+    return {
+      area_km2: GIS.A_high_km2,
+      sr: GIS.SR_high_mean
+    };
+  }
+  if (choice === "high+mod"){
+    const area_km2 = GIS.A_high_km2 + GIS.A_mod_km2;
+    const sr = weightedMeanSR([
+      { sr: GIS.SR_high_mean, area: GIS.A_high_km2 },
+      { sr: GIS.SR_mod_mean,  area: GIS.A_mod_km2  }
+    ]);
+    return { area_km2, sr };
+  }
+  // high+mod+low
+  const area_km2 = GIS.A_high_km2 + GIS.A_mod_km2 + GIS.A_low_km2;
+  const sr = weightedMeanSR([
+    { sr: GIS.SR_high_mean, area: GIS.A_high_km2 },
+    { sr: GIS.SR_mod_mean,  area: GIS.A_mod_km2  },
+    { sr: GIS.SR_low_mean,  area: GIS.A_low_km2  }
+  ]);
+  return { area_km2, sr };
 }
 
 function calculate(){
   const eff = parseFloat(document.getElementById("tech").value);
-  const pr  = parseFloat(document.getElementById("pr").value);
-  const cov = parseFloat(document.getElementById("coverage").value) / 100.0;
   const choice = document.getElementById("classChoice").value;
-  const hh = parseFloat(document.getElementById("hh").value);
+  const cov = parseFloat(document.getElementById("coverage").value) / 100;
 
-  // Basic validation
-  if (isNaN(eff) || isNaN(pr) || isNaN(cov) || isNaN(hh)) {
-    alert("Please check inputs.");
-    return;
-  }
-  if (pr <= 0 || pr > 1) {
-    alert("PR should be between 0 and 1 (e.g., 0.80).");
-    return;
-  }
-  if (cov < 0 || cov > 1) {
-    alert("Coverage must be between 0 and 100.");
-    return;
-  }
+  const { area_km2, sr } = getSelectedAreaAndSR(choice);
+  const area_m2 = km2_to_m2(area_km2);
+  const used_m2 = area_m2 * cov;
 
-  let area_m2 = km2_to_m2(GIS.A_high_km2);
-  let sr = GIS.SR_high_mean;
+  const energy_kwh = sr * used_m2 * eff * FIXED.PR;
+  const households = energy_kwh / (FIXED.HH_KWH_YEAR || 1);
+  const avoided_kg = energy_kwh * FIXED.GRID_EF_KGCO2_PER_KWH;
 
-  if (choice === "high+mod") {
-    // Area-weighted mean SR
-    const Ah = GIS.A_high_km2, Am = GIS.A_mod_km2;
-    const totalA = Ah + Am;
-    sr = (GIS.SR_high_mean * Ah + GIS.SR_mod_mean * Am) / (totalA || 1);
-    area_m2 = km2_to_m2(totalA);
-  }
+  document.getElementById("k_area").innerText  = `${fmt(area_km2,2)} km²`;
+  document.getElementById("k_used").innerText  = `${fmt(used_m2,0)} m²`;
+  document.getElementById("k_sr").innerText    = `${fmt(sr,0)} kWh/m²/year`;
+  document.getElementById("k_energy").innerText= `${fmt(energy_kwh,0)} kWh/year`;
+  document.getElementById("k_hh").innerText    = `${fmt(households,0)} households/year`;
+  document.getElementById("k_co2").innerText   = `${fmt(avoided_kg,0)} kgCO₂/year`;
 
-  const used_area_m2 = area_m2 * cov;
-  const energy_kwh = sr * used_area_m2 * eff * pr;
-  const buildings = energy_kwh / (hh || 1);
-
-  const out = document.getElementById("out");
-  out.innerHTML = `
-    <div class="kpi">Estimated annual generation: ${fmtNumber(energy_kwh)} kWh/year</div>
-    <div class="kpi">Equivalent households/buildings: ${fmtNumber(buildings)}</div>
-    <div class="small">
-      <b>Inputs used:</b><br/>
-      - Selected land area: ${choice === "high" ? GIS.A_high_km2 : (GIS.A_high_km2 + GIS.A_mod_km2)} km²<br/>
-      - Coverage: ${(cov*100).toFixed(0)}% → Used PV area: ${fmtNumber(used_area_m2)} m²<br/>
-      - Mean solar radiation (SR): ${sr.toFixed(0)} kWh/m²/year<br/>
-      - Efficiency: ${(eff*100).toFixed(1)}%<br/>
-      - PR: ${pr.toFixed(2)}<br/>
-      - Household consumption: ${fmtNumber(hh)} kWh/year
-    </div>
+  document.getElementById("assumptions").innerHTML = `
+    PR = <b>${FIXED.PR.toFixed(2)}</b> (system losses) ·
+    Household demand = <b>${fmt(FIXED.HH_KWH_YEAR,0)}</b> kWh/year ·
+    Grid EF = <b>${FIXED.GRID_EF_KGCO2_PER_KWH.toFixed(2)}</b> kgCO₂/kWh
   `;
 }
 
-// Auto-run once
+/**
+ * ===========================
+ * UI: Coverage label
+ * ===========================
+ */
+const covEl = document.getElementById("coverage");
+const covLabel = document.getElementById("covLabel");
+covEl.addEventListener("input", () => {
+  covLabel.innerText = covEl.value;
+  calculate();
+});
+
+/**
+ * ===========================
+ * MAP: Leaflet base + PNG overlays
+ * ===========================
+ */
+const map = L.map("map", { zoomControl: true }).setView([37.0, 35.3], 8);
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+const bounds = L.latLngBounds(DATA.imageBounds);
+
+const suitOverlay = L.imageOverlay(DATA.suitabilityPng, bounds, { opacity: 0.75 });
+const radOverlay  = L.imageOverlay(DATA.radiationPng, bounds, { opacity: 0.60 });
+
+// default: suitability ON, radiation OFF
+suitOverlay.addTo(map);
+map.fitBounds(bounds);
+
+/**
+ * Layer toggles + opacity controls
+ */
+const togSuit = document.getElementById("togSuit");
+const togRad  = document.getElementById("togRad");
+const opSuit  = document.getElementById("opSuit");
+const opRad   = document.getElementById("opRad");
+
+togSuit.addEventListener("change", () => {
+  if (togSuit.checked) suitOverlay.addTo(map);
+  else map.removeLayer(suitOverlay);
+});
+togRad.addEventListener("change", () => {
+  if (togRad.checked) radOverlay.addTo(map);
+  else map.removeLayer(radOverlay);
+});
+
+opSuit.addEventListener("input", () => suitOverlay.setOpacity(parseInt(opSuit.value,10)/100));
+opRad.addEventListener("input", () => radOverlay.setOpacity(parseInt(opRad.value,10)/100));
+
+/**
+ * First compute
+ */
 calculate();
 </script>
-
 </body>
 </html>
