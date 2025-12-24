@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>PV Suitability – Adana (V3)</title>
+  <title>Adana PV Uygunluk & Enerji Potansiyeli</title>
 
   <style>
     :root{
@@ -13,55 +13,109 @@
       --text:#e9eefc;
       --muted:#b8c2e0;
       --line:rgba(255,255,255,.10);
+      --accent:#2ecc71;
+      --btn:#ffffff;
+      --btnText:#0a0f1a;
+      --shadow:0 12px 30px rgba(0,0,0,.28);
     }
     *{box-sizing:border-box}
-    body{margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text);}
-    .wrap{max-width:1200px; margin:0 auto; padding:22px;}
-    h1{margin:0 0 8px 0; font-size:24px;}
-    .sub{color:var(--muted); margin:0 0 18px 0; line-height:1.45;}
-    .grid{display:grid; grid-template-columns:380px 1fr; gap:18px;}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text);}
+    .wrap{max-width:1100px; margin:0 auto; padding:18px;}
+    h1{margin:0 0 8px 0; font-size:22px; line-height:1.2;}
+    .sub{color:var(--muted); margin:0 0 14px 0; line-height:1.45; font-size:14px;}
+    .grid{display:grid; grid-template-columns:1fr; gap:14px;}
     .panel{
       background:linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
       border:1px solid var(--line);
       border-radius:16px;
-      padding:16px;
-      box-shadow:0 10px 25px rgba(0,0,0,.25);
+      padding:14px;
+      box-shadow:var(--shadow);
     }
-    label{display:block; font-weight:800; margin:12px 0 6px;}
+
+    /* Mobile-first: single column. On wide screens, split. */
+    @media (min-width: 980px){
+      .grid{grid-template-columns:380px 1fr; gap:16px;}
+      .wrap{padding:22px;}
+      h1{font-size:24px;}
+      .sub{font-size:14px;}
+    }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:10px;
+    }
+    .langBtn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:700;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line); background:rgba(255,255,255,.04);
+      font-size:12px; color:var(--muted);
+    }
+    .pillDot{width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(46,204,113,.15);}
+
+    label{display:block; font-weight:900; margin:12px 0 6px; font-size:14px;}
+    .help{font-size:12px; color:var(--muted); line-height:1.4; margin-top:6px;}
     select, input[type="range"]{width:100%;}
     select{
-      padding:10px; border-radius:12px; border:1px solid var(--line);
+      padding:12px; border-radius:14px; border:1px solid var(--line);
       background:#0a1326; color:var(--text);
+      font-size:15px;
     }
+
     .row{display:flex; gap:10px; align-items:center;}
-    .small{font-size:12px; color:var(--muted); line-height:1.45;}
-    .btn{
-      width:100%; margin-top:14px; padding:12px 14px;
-      border-radius:12px; border:0; background:#ffffff; color:#0a0f1a;
-      font-weight:900; cursor:pointer;
+    .rangeBox{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
     }
-    .kpis{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;}
+    input[type="range"]{height:28px;}
+    .rangeVal{
+      min-width:70px;
+      text-align:right;
+      font-weight:900;
+      font-size:16px;
+    }
+
+    .btn{
+      width:100%;
+      padding:14px 14px;
+      border-radius:14px;
+      border:0;
+      background:var(--btn);
+      color:var(--btnText);
+      font-weight:900;
+      cursor:pointer;
+      font-size:16px;
+    }
+    .btn:active{transform:translateY(1px);}
+
+    .kpis{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;}
     .kpi{
       border:1px solid var(--line);
       border-radius:14px;
       padding:12px;
       background:rgba(255,255,255,.03);
-      min-height:72px;
+      min-height:76px;
     }
-    .kpi .t{font-size:12px; color:var(--muted);}
-    .kpi .v{font-size:18px; font-weight:900; margin-top:6px;}
+    .kpi .t{font-size:12px; color:var(--muted); line-height:1.25;}
+    .kpi .v{font-size:16px; font-weight:950; margin-top:7px; line-height:1.15;}
     .kpi.full{grid-column:1 / span 2;}
-    .hr{height:1px; background:var(--line); margin:14px 0;}
-    .pill{
-      display:inline-block; padding:4px 10px; border-radius:999px;
-      border:1px solid var(--line); background:rgba(255,255,255,.04);
-      font-size:12px; color:var(--muted);
-    }
+    .kpi .s{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4;}
 
-    .rightTop{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:flex-end;}
-    .titleBlock h2{margin:0; font-size:16px;}
-    .titleBlock .small{margin-top:6px;}
-    .imgStack{display:flex; flex-direction:column; gap:14px; margin-top:12px;}
+    .hr{height:1px; background:var(--line); margin:14px 0;}
+
+    .imgStack{display:flex; flex-direction:column; gap:12px;}
     .imgCard{
       border:1px solid var(--line);
       border-radius:16px;
@@ -69,175 +123,238 @@
       background:rgba(255,255,255,.03);
     }
     .imgHead{
-      padding:12px 12px 10px 12px;
+      padding:12px;
       border-bottom:1px solid var(--line);
       display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      align-items:center;
+      align-items:flex-end;
     }
-    .imgHead .h{font-weight:900;}
+    .imgHead .h{font-weight:950; font-size:14px;}
     .imgHead .meta{font-size:12px; color:var(--muted);}
     .imgWrap{padding:12px;}
     img{
       width:100%;
       height:auto;
       display:block;
-      border-radius:12px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.08);
     }
-    .legend{
-      margin-top:10px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      background:rgba(255,255,255,.03);
-    }
-    .legendTitle{font-weight:900; font-size:13px; margin-bottom:8px;}
-    .legRow{display:flex; align-items:center; gap:8px; margin:6px 0; font-size:12px; color:var(--muted);}
-    .swatch{width:12px; height:12px; border-radius:3px; border:1px solid rgba(255,255,255,.25);}
 
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr;}
+    /* Sticky action area on mobile */
+    .stickyBar{
+      position:sticky;
+      bottom:10px;
+      padding-top:10px;
+      z-index:5;
+    }
+    .stickyInner{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(11,18,32,.65);
+      backdrop-filter: blur(8px);
+      padding:10px;
+      box-shadow:0 12px 30px rgba(0,0,0,.35);
+    }
+    .stickyNote{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.35;
+    }
+
+    /* Language modal */
+    .modalBackdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.6);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(520px, 100%);
+      background:linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 18px 45px rgba(0,0,0,.45);
+    }
+    .modal h2{margin:0 0 6px 0; font-size:18px;}
+    .modal p{margin:0 0 14px 0; color:var(--muted); font-size:13px; line-height:1.4;}
+    .modalBtns{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    .modalBtn{
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      font-weight:900;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .modalBtn.primary{
+      background:var(--btn);
+      color:var(--btnText);
+      border:0;
     }
   </style>
 </head>
 
 <body>
+  <!-- Language chooser modal -->
+  <div class="modalBackdrop" id="langModal">
+    <div class="modal">
+      <h2 id="m_title">Dil / Language</h2>
+      <p id="m_text">
+        Lütfen dili seçin. / Please choose your language.
+      </p>
+      <div class="modalBtns">
+        <button class="modalBtn primary" onclick="setLang('tr')">Türkçe</button>
+        <button class="modalBtn primary" onclick="setLang('en')">English</button>
+      </div>
+    </div>
+  </div>
+
   <div class="wrap">
-    <h1>PV Suitability & Energy Potential – Adana (Prototype)</h1>
-    <p class="sub">
-      Users explore PV scenarios by selecting PV technology, suitability class group, and coverage ratio.
-      PR, building-demand proxy, and grid emission factor are fixed assumptions for clarity.
+    <div class="topbar">
+      <div class="pill"><span class="pillDot"></span><span id="badge">Web Harita</span></div>
+      <button class="langBtn" onclick="openLangModal()" id="langBtn">TR / EN</button>
+    </div>
+
+    <h1 id="title">Adana PV Uygunluk & Enerji Potansiyeli</h1>
+    <p class="sub" id="subtitle">
+      Bu sayfa, uygunluk haritasına göre seçilen alanın ne kadarında güneş paneli kurulduğunu varsayarak yıllık enerji üretimini tahmin eder.
+      (Akademik amaçlı, yaklaşık hesap.)
     </p>
 
     <div class="grid">
       <!-- LEFT -->
       <div class="panel">
-        <div class="pill">Inputs</div>
+        <div class="pill"><span class="pillDot"></span><span id="inputsPill">Kullanıcı Seçimleri</span></div>
 
-        <label>1) PV Technology (module efficiency)</label>
-        <select id="tech">
+        <label id="l1">1) PV Teknolojisi (verim)</label>
+        <select id="tech" aria-label="PV technology">
           <option value="0.131">c-Si (13.1%)</option>
           <option value="0.079">a-Si (7.9%)</option>
           <option value="0.088">CdTe (8.8%)</option>
           <option value="0.084">CIGS (8.4%)</option>
           <option value="0.263">CPV (26.3%)</option>
         </select>
+        <div class="help" id="h1">
+          Burada panel türünü seçiyorsun. Verim arttıkça aynı alandan daha fazla enerji üretilir.
+        </div>
 
-        <label>2) Suitability class selection</label>
-        <select id="classChoice">
-          <option value="high">Highly suitable</option>
-          <option value="mod">Moderately suitable</option>
-          <option value="high+mod">Highly + Moderately suitable</option>
+        <label id="l2">2) Uygunluk sınıfı</label>
+        <select id="classChoice" aria-label="Suitability class selection">
+          <option value="high">Yüksek uygun</option>
+          <option value="mod">Orta uygun</option>
+          <option value="high+mod">Yüksek + Orta uygun</option>
         </select>
-
-        <label>3) Coverage ratio (how much of selected land is developed as PV)</label>
-        <div class="row">
-          <input id="coverage" type="range" min="0" max="30" value="10" />
-          <div style="min-width:64px; text-align:right; font-weight:900;">
-            <span id="covLabel">10</span>%
-          </div>
-        </div>
-        <div class="small">
-          Coverage is a scenario input. Slider capped at 30% to avoid unrealistic outcomes.
+        <div class="help" id="h2">
+          Uygunluk haritasından hangi sınıf(lar)ı “kullanılabilir arazi” olarak alacağımızı belirler.
         </div>
 
-        <button class="btn" onclick="calculate()">Calculate</button>
+        <label id="l3">3) Kurulum oranı</label>
+        <div class="rangeBox">
+          <div class="row">
+            <input id="coverage" type="range" min="0" max="30" value="10" />
+            <div class="rangeVal"><span id="covLabel">10</span>%</div>
+          </div>
+          <div class="help" id="h3">
+            Seçtiğin uygun alanın yüzde kaçına PV kurulacağını varsayar. (0–30% aralığı, gerçekçi senaryo için sınırlandırıldı.)
+          </div>
+        </div>
 
-        <div class="hr"></div>
-        <div class="pill">Results</div>
-
-        <div class="kpis">
-          <div class="kpi">
-            <div class="t">Selected land area</div>
-            <div class="v" id="k_area">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">PV-developed area</div>
-            <div class="v" id="k_used">—</div>
-          </div>
-
-          <div class="kpi">
-            <div class="t">Solar radiation used (mean)</div>
-            <div class="v" id="k_sr">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">Annual generation</div>
-            <div class="v" id="k_energy">—</div>
-          </div>
-
-          <div class="kpi">
-            <div class="t">Buildings served (indicator)</div>
-            <div class="v" id="k_build">—</div>
-          </div>
-          <div class="kpi">
-            <div class="t">Avoided CO₂ (indicator)</div>
-            <div class="v" id="k_co2">—</div>
-          </div>
-
-          <div class="kpi full">
-            <div class="t">Assumptions (fixed)</div>
-            <div class="small" id="assumptions"></div>
-          </div>
-
-          <div class="kpi full">
-            <div class="t">Formula</div>
-            <div class="small">
-              Energy (kWh/year) = SR (kWh/m²/year) × Area(m²) × Coverage × Efficiency × PR
+        <!-- Sticky Calculate (mobile friendly) -->
+        <div class="stickyBar">
+          <div class="stickyInner">
+            <button class="btn" onclick="calculate()" id="calcBtn">Hesapla</button>
+            <div class="stickyNote" id="stickyNote">
+              Not: Bu sonuçlar “yaklaşık potansiyel” göstergesidir; saha doğrulaması ve detay mühendislik çalışması gerektirir.
             </div>
           </div>
         </div>
 
         <div class="hr"></div>
-        <div class="small">
-          GIS sources: CLC2018, ASTER GDEM, ArcGIS Solar Radiation outputs. Academic prototype.
+        <div class="pill"><span class="pillDot"></span><span id="resultsPill">Sonuçlar</span></div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t" id="k1t">Seçilen uygun alan</div>
+            <div class="v" id="k_area">—</div>
+            <div class="s" id="k1s">Uygunluk sınıf seçimine göre.</div>
+          </div>
+          <div class="kpi">
+            <div class="t" id="k2t">PV kurulacak alan</div>
+            <div class="v" id="k_used">—</div>
+            <div class="s" id="k2s">Kurulum oranı uygulanmış hali.</div>
+          </div>
+
+          <div class="kpi">
+            <div class="t" id="k3t">Kullanılan güneşlenme değeri</div>
+            <div class="v" id="k_sr">—</div>
+            <div class="s" id="k3s">Ortalama ışınım (kWh/m²/yıl).</div>
+          </div>
+          <div class="kpi">
+            <div class="t" id="k4t">Yıllık elektrik üretimi</div>
+            <div class="v" id="k_energy">—</div>
+            <div class="s" id="k4s">Seçilen teknoloji ve PR ile.</div>
+          </div>
+
+          <div class="kpi">
+            <div class="t" id="k5t">Karşılanabilecek hane</div>
+            <div class="v" id="k_house">—</div>
+            <div class="s" id="k5s">Ortalama hane tüketimine göre.</div>
+          </div>
+          <div class="kpi">
+            <div class="t" id="k6t">Tahmini CO₂ azaltımı</div>
+            <div class="v" id="k_co2">—</div>
+            <div class="s" id="k6s">Şebeke emisyon faktörü ile.</div>
+          </div>
+
+          <div class="kpi full">
+            <div class="t" id="assT">Sabit varsayımlar</div>
+            <div class="s" id="assumptions"></div>
+          </div>
+
+          <div class="kpi full">
+            <div class="t" id="formT">Kısa formül</div>
+            <div class="s" id="formulaText">
+              Enerji (kWh/yıl) = Işınım × Alan × Kurulum Oranı × Panel Verimi × PR
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="help" id="footNote">
+          Veri kaynakları: CLC2018, ASTER GDEM, Solar Radiation çıktıları. (Akademik çalışma.)
         </div>
       </div>
 
       <!-- RIGHT -->
       <div class="panel">
-        <div class="rightTop">
-          <div class="titleBlock">
-            <h2>Maps (PNG overlays)</h2>
-            <div class="small">Files are loaded directly from the GitHub repo root.</div>
-          </div>
-          <div class="small">
-            Adana building count (reference): <b>73,992</b>
-          </div>
+        <div class="pill"><span class="pillDot"></span><span id="mapsPill">Haritalar</span></div>
+        <div class="help" id="mapsHelp" style="margin-top:8px;">
+          Uygunluk haritası ve güneşlenme (ışınım) haritası, alttaki hesapların mekânsal temelini gösterir.
         </div>
 
-        <div class="imgStack">
+        <div class="imgStack" style="margin-top:12px;">
           <div class="imgCard">
             <div class="imgHead">
-              <div class="h">Final Suitability Map (Raster)</div>
-              <div class="meta">File: suitability_son.png</div>
+              <div class="h" id="m1h">PV Uygunluk Haritası</div>
+              <div class="meta" id="m1m">Adana</div>
             </div>
             <div class="imgWrap">
-              <img src="suitability_son.png" alt="Adana PV Suitability Raster"/>
-              <div class="legend">
-                <div class="legendTitle">Legend — PV Suitability Classes</div>
-                <div class="small" style="margin-bottom:8px;">
-                  Title: <b>PV Suitability (Adana)</b> · Unit: <b>categorical index</b>
-                </div>
-                <div class="legRow"><span class="swatch" style="background:#ffffff;"></span> NoData / Restricted</div>
-                <div class="legRow"><span class="swatch" style="background:#00bcd4;"></span> Highly suitable</div>
-                <div class="legRow"><span class="swatch" style="background:#2ecc71;"></span> Moderately suitable</div>
-                <div class="legRow"><span class="swatch" style="background:#f1c40f;"></span> Low suitable (not used in calculations)</div>
-                <div class="legRow"><span class="swatch" style="background:#e74c3c;"></span> Not suitable / Restricted</div>
-              </div>
+              <img src="suitability_son.png" alt="Adana PV Suitability Map"/>
             </div>
           </div>
 
           <div class="imgCard">
             <div class="imgHead">
-              <div class="h">Solar Radiation Map (Raster)</div>
-              <div class="meta">File: radiation.png · Unit: kWh/m²/year</div>
+              <div class="h" id="m2h">Güneş Işınım Haritası</div>
+              <div class="meta" id="m2m">kWh/m²/yıl</div>
             </div>
             <div class="imgWrap">
-              <img src="radiation.png" alt="Adana Solar Radiation Raster"/>
-              <div class="small" style="margin-top:10px;">
-                Mean SR values used (by suitability zone):<br/>
-                <b>Highly:</b> 1406.75546808 · <b>Moderately:</b> 1359.54816032
-              </div>
+              <img src="radiation.png" alt="Adana Solar Irradiation Map"/>
             </div>
           </div>
         </div>
@@ -248,29 +365,30 @@
 
 <script>
 /**
- * ===== GIS INPUTS (UPDATE THESE TWO AREAS) =====
+ * ===== UPDATE GIS INPUTS HERE =====
  * Units:
  * - Area: km²
  * - SR mean: kWh/m²/year
  */
 const GIS = {
-  // TODO: replace with your real areas from GIS (km²)
+  // Replace with real areas from GIS (km²)
   A_high_km2: 224.978,
   A_mod_km2: 1780.727,
 
-  // Given SR means (kWh/m²/year)
+  // Mean SR used in calculation (kWh/m²/year)
   SR_high_mean: 1406.75546808,
   SR_mod_mean: 1359.54816032
 };
 
 /**
- * ===== Fixed assumptions (hidden from user) =====
+ * ===== Fixed assumptions =====
+ * IMPORTANT: "Adana households" is used (not buildings).
  */
 const FIXED = {
   PR: 0.50,
-  BUILDING_KWH_YEAR: 4500,
-  GRID_EF_KGCO2_PER_KWH: 0.45,
-  ADANA_BUILDING_COUNT: 1035888
+  HOUSEHOLD_KWH_YEAR: 4500,          // average household annual electricity use (proxy)
+  GRID_EF_KGCO2_PER_KWH: 0.45,       // grid emission factor
+  ADANA_HOUSEHOLDS: 1035888          // Adana households (reference)
 };
 
 function km2_to_m2(km2){ return km2 * 1_000_000; }
@@ -281,6 +399,192 @@ function weightedMeanSR(Ah, Am, SRh, SRm){
   const total = Ah + Am;
   if (!total) return 0;
   return (SRh*Ah + SRm*Am) / total;
+}
+
+/* ===== i18n ===== */
+const I18N = {
+  tr: {
+    pageTitle: "Adana PV Uygunluk & Enerji Potansiyeli",
+    pageSubtitle:
+      "Bu sayfa, uygunluk haritasına göre seçilen alanın ne kadarında güneş paneli kurulduğunu varsayarak yıllık enerji üretimini tahmin eder. (Akademik amaçlı, yaklaşık hesap.)",
+    badge: "Web Harita",
+    inputsPill: "Kullanıcı Seçimleri",
+    resultsPill: "Sonuçlar",
+    mapsPill: "Haritalar",
+    mapsHelp: "Uygunluk haritası ve güneşlenme (ışınım) haritası, alttaki hesapların mekânsal temelini gösterir.",
+
+    l1: "1) PV Teknolojisi (verim)",
+    h1: "Burada panel türünü seçiyorsun. Verim arttıkça aynı alandan daha fazla enerji üretilir.",
+    l2: "2) Uygunluk sınıfı",
+    h2: "Uygunluk haritasından hangi sınıf(lar)ı “kullanılabilir arazi” olarak alacağımızı belirler.",
+    l3: "3) Kurulum oranı",
+    h3: "Seçtiğin uygun alanın yüzde kaçına PV kurulacağını varsayar. (0–30% aralığı, gerçekçi senaryo için sınırlandırıldı.)",
+    calcBtn: "Hesapla",
+    stickyNote: "Not: Bu sonuçlar “yaklaşık potansiyel” göstergesidir; saha doğrulaması ve detay mühendislik çalışması gerektirir.",
+
+    k1t: "Seçilen uygun alan",
+    k1s: "Uygunluk sınıf seçimine göre.",
+    k2t: "PV kurulacak alan",
+    k2s: "Kurulum oranı uygulanmış hali.",
+    k3t: "Kullanılan güneşlenme değeri",
+    k3s: "Ortalama ışınım (kWh/m²/yıl).",
+    k4t: "Yıllık elektrik üretimi",
+    k4s: "Seçilen teknoloji ve PR ile.",
+    k5t: "Karşılanabilecek hane",
+    k5s: "Ortalama hane tüketimine göre.",
+    k6t: "Tahmini CO₂ azaltımı",
+    k6s: "Şebeke emisyon faktörü ile.",
+
+    assT: "Sabit varsayımlar",
+    formT: "Kısa formül",
+    formulaText: "Enerji (kWh/yıl) = Işınım × Alan × Kurulum Oranı × Panel Verimi × PR",
+
+    footNote: "Veri kaynakları: CLC2018, ASTER GDEM, Solar Radiation çıktıları. (Akademik çalışma.)",
+
+    map1Title: "PV Uygunluk Haritası",
+    map1Meta: "Adana",
+    map2Title: "Güneş Işınım Haritası",
+    map2Meta: "kWh/m²/yıl",
+
+    class_high: "Yüksek uygun",
+    class_mod: "Orta uygun",
+    class_both: "Yüksek + Orta uygun",
+
+    modalTitle: "Dil Seçimi",
+    modalText: "Lütfen devam etmek için dili seçin."
+  },
+  en: {
+    pageTitle: "Adana PV Suitability & Energy Potential",
+    pageSubtitle:
+      "This page estimates annual PV electricity generation by assuming what share of the selected suitable land is developed with PV. (Academic, indicative calculation.)",
+    badge: "Web Map",
+    inputsPill: "Your Selections",
+    resultsPill: "Results",
+    mapsPill: "Maps",
+    mapsHelp: "The suitability and solar irradiation maps provide the spatial basis for the calculations below.",
+
+    l1: "1) PV Technology (efficiency)",
+    h1: "Select the PV technology. Higher efficiency yields more energy from the same area.",
+    l2: "2) Suitability class",
+    h2: "Choose which suitability class(es) are treated as 'usable land' for the scenario.",
+    l3: "3) Coverage ratio",
+    h3: "Assumes what percent of the selected suitable land is developed as PV. (Capped at 30% for realistic scenarios.)",
+    calcBtn: "Calculate",
+    stickyNote: "Note: These are indicative results; field validation and detailed engineering are required.",
+
+    k1t: "Selected suitable land",
+    k1s: "Depends on the class selection.",
+    k2t: "PV-developed land",
+    k2s: "After applying the coverage ratio.",
+    k3t: "Solar irradiation used",
+    k3s: "Mean irradiation (kWh/m²/year).",
+    k4t: "Annual electricity generation",
+    k4s: "Using selected technology and PR.",
+    k5t: "Households supplied",
+    k5s: "Based on average household demand.",
+    k6t: "Estimated CO₂ reduction",
+    k6s: "Using grid emission factor.",
+
+    assT: "Fixed assumptions",
+    formT: "Formula (short)",
+    formulaText: "Energy (kWh/year) = Irradiation × Area × Coverage × Efficiency × PR",
+
+    footNote: "Data sources: CLC2018, ASTER GDEM, Solar Radiation outputs. (Academic study.)",
+
+    map1Title: "PV Suitability Map",
+    map1Meta: "Adana",
+    map2Title: "Solar Irradiation Map",
+    map2Meta: "kWh/m²/year",
+
+    class_high: "Highly suitable",
+    class_mod: "Moderately suitable",
+    class_both: "Highly + Moderately suitable",
+
+    modalTitle: "Choose Language",
+    modalText: "Please choose a language to continue."
+  }
+};
+
+let CURRENT_LANG = "tr";
+
+function applyLang(lang){
+  CURRENT_LANG = lang;
+  document.documentElement.lang = lang === "tr" ? "tr" : "en";
+  const T = I18N[lang];
+
+  // Page
+  document.title = T.pageTitle;
+  document.getElementById("title").innerText = T.pageTitle;
+  document.getElementById("subtitle").innerText = T.pageSubtitle;
+  document.getElementById("badge").innerText = T.badge;
+
+  // Pills
+  document.getElementById("inputsPill").innerText = T.inputsPill;
+  document.getElementById("resultsPill").innerText = T.resultsPill;
+  document.getElementById("mapsPill").innerText = T.mapsPill;
+  document.getElementById("mapsHelp").innerText = T.mapsHelp;
+
+  // Inputs
+  document.getElementById("l1").innerText = T.l1;
+  document.getElementById("h1").innerText = T.h1;
+  document.getElementById("l2").innerText = T.l2;
+  document.getElementById("h2").innerText = T.h2;
+  document.getElementById("l3").innerText = T.l3;
+  document.getElementById("h3").innerText = T.h3;
+  document.getElementById("calcBtn").innerText = T.calcBtn;
+  document.getElementById("stickyNote").innerText = T.stickyNote;
+
+  // KPIs
+  document.getElementById("k1t").innerText = T.k1t;
+  document.getElementById("k1s").innerText = T.k1s;
+  document.getElementById("k2t").innerText = T.k2t;
+  document.getElementById("k2s").innerText = T.k2s;
+  document.getElementById("k3t").innerText = T.k3t;
+  document.getElementById("k3s").innerText = T.k3s;
+  document.getElementById("k4t").innerText = T.k4t;
+  document.getElementById("k4s").innerText = T.k4s;
+  document.getElementById("k5t").innerText = T.k5t;
+  document.getElementById("k5s").innerText = T.k5s;
+  document.getElementById("k6t").innerText = T.k6t;
+  document.getElementById("k6s").innerText = T.k6s;
+
+  document.getElementById("assT").innerText = T.assT;
+  document.getElementById("formT").innerText = T.formT;
+  document.getElementById("formulaText").innerText = T.formulaText;
+  document.getElementById("footNote").innerText = T.footNote;
+
+  // Map titles
+  document.getElementById("m1h").innerText = T.map1Title;
+  document.getElementById("m1m").innerText = T.map1Meta;
+  document.getElementById("m2h").innerText = T.map2Title;
+  document.getElementById("m2m").innerText = T.map2Meta;
+
+  // Update class dropdown labels
+  const classSel = document.getElementById("classChoice");
+  classSel.options[0].text = T.class_high;
+  classSel.options[1].text = T.class_mod;
+  classSel.options[2].text = T.class_both;
+
+  // Assumptions block text (localized but numeric stable)
+  renderAssumptions();
+}
+
+function renderAssumptions(){
+  const T = I18N[CURRENT_LANG];
+  const pr = FIXED.PR.toFixed(2);
+  const dem = fmt(FIXED.HOUSEHOLD_KWH_YEAR,0);
+  const ef = FIXED.GRID_EF_KGCO2_PER_KWH.toFixed(2);
+  const hh = fmt(FIXED.ADANA_HOUSEHOLDS,0);
+
+  if (CURRENT_LANG === "tr"){
+    document.getElementById("assumptions").innerHTML =
+      `PR = <b>${pr}</b> · Ortalama hane tüketimi = <b>${dem}</b> kWh/hane/yıl · ` +
+      `Şebeke EF = <b>${ef}</b> kgCO₂/kWh · Adana hane sayısı (referans) = <b>${hh}</b>`;
+  } else {
+    document.getElementById("assumptions").innerHTML =
+      `PR = <b>${pr}</b> · Average household demand = <b>${dem}</b> kWh/household/year · ` +
+      `Grid EF = <b>${ef}</b> kgCO₂/kWh · Adana households (reference) = <b>${hh}</b>`;
+  }
 }
 
 function calculate(){
@@ -307,30 +611,27 @@ function calculate(){
 
   const energy_kwh = sr * used_m2 * eff * FIXED.PR;
 
-  const buildings_served = energy_kwh / (FIXED.BUILDING_KWH_YEAR || 1);
-  const pct_of_adana = (buildings_served / (FIXED.ADANA_BUILDING_COUNT || 1)) * 100;
+  const households_supplied = energy_kwh / (FIXED.HOUSEHOLD_KWH_YEAR || 1);
+  const pct_of_adana = (households_supplied / (FIXED.ADANA_HOUSEHOLDS || 1)) * 100;
 
   const avoided_kg = energy_kwh * FIXED.GRID_EF_KGCO2_PER_KWH;
 
   document.getElementById("k_area").innerText   = `${fmt(area_km2,2)} km²`;
   document.getElementById("k_used").innerText   = `${fmt(used_m2,0)} m²`;
-  document.getElementById("k_sr").innerText     = `${fmt(sr,0)} kWh/m²/year`;
-  document.getElementById("k_energy").innerText = `${fmt(energy_kwh,0)} kWh/year`;
+  document.getElementById("k_sr").innerText     = `${fmt(sr,0)} kWh/m²/${CURRENT_LANG === "tr" ? "yıl" : "year"}`;
+  document.getElementById("k_energy").innerText = `${fmt(energy_kwh,0)} kWh/${CURRENT_LANG === "tr" ? "yıl" : "year"}`;
 
-  document.getElementById("k_build").innerText  =
-    `${fmt(buildings_served,0)} buildings/year (${fmt(pct_of_adana,2)}% of Adana)`;
+  // Households + percent
+  const hhLabel = CURRENT_LANG === "tr" ? "hane" : "households";
+  document.getElementById("k_house").innerText  =
+    `${fmt(households_supplied,0)} ${hhLabel} (${fmt(pct_of_adana,2)}%)`;
 
-  document.getElementById("k_co2").innerText    = `${fmt(avoided_kg,0)} kgCO₂/year`;
+  document.getElementById("k_co2").innerText    = `${fmt(avoided_kg,0)} kgCO₂/${CURRENT_LANG === "tr" ? "yıl" : "year"}`;
 
-  document.getElementById("assumptions").innerHTML = `
-    PR = <b>${FIXED.PR.toFixed(2)}</b> ·
-    Demand proxy = <b>${fmt(FIXED.BUILDING_KWH_YEAR,0)}</b> kWh/building/year ·
-    Grid EF = <b>${FIXED.GRID_EF_KGCO2_PER_KWH.toFixed(2)}</b> kgCO₂/kWh ·
-    Adana buildings = <b>${fmt(FIXED.ADANA_BUILDING_COUNT,0)}</b>
-  `;
+  renderAssumptions();
 }
 
-// Coverage label live
+// Live coverage label
 const covEl = document.getElementById("coverage");
 const covLabel = document.getElementById("covLabel");
 covEl.addEventListener("input", () => {
@@ -338,8 +639,38 @@ covEl.addEventListener("input", () => {
   calculate();
 });
 
-// Initial
-calculate();
+// Language modal controls
+function openLangModal(){
+  const modal = document.getElementById("langModal");
+  modal.style.display = "flex";
+  // update modal copy based on current (or default)
+  const T = I18N[CURRENT_LANG] || I18N.tr;
+  document.getElementById("m_title").innerText = T.modalTitle;
+  document.getElementById("m_text").innerText = T.modalText;
+}
+function closeLangModal(){
+  document.getElementById("langModal").style.display = "none";
+}
+function setLang(lang){
+  localStorage.setItem("pv_lang", lang);
+  applyLang(lang);
+  closeLangModal();
+}
+
+// Boot
+(function init(){
+  const saved = localStorage.getItem("pv_lang");
+  if (saved === "tr" || saved === "en"){
+    applyLang(saved);
+    calculate();
+  } else {
+    // default language for initial render
+    applyLang("tr");
+    calculate();
+    // show chooser on first visit
+    openLangModal();
+  }
+})();
 </script>
 
 </body>
