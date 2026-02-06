@@ -224,7 +224,7 @@
       <div class="panel">
         <div class="pill"><span class="pillDot"></span><span id="inputsPill">Kullanıcı Seçimleri</span></div>
 
-        <label id="l1">1) PV Teknolojisi (verim)</label>
+        <label id="l1">1) PV Teknolojisi (Verim)</label>
         <select id="tech" aria-label="PV technology">
           <option value="0.131">c-Si (13.1%)</option>
           <option value="0.079">a-Si (7.9%)</option>
@@ -232,7 +232,7 @@
           <option value="0.084">CIGS (8.4%)</option>
           <option value="0.263">CPV (26.3%)</option>
         </select>
-        <div class="help" id="h1">Burada panel türünü seçiyorsun. Verim arttıkça aynı alandan daha fazla enerji üretilir.</div>
+        <div class="help" id="h1">Lütfen kullanmak istediğiniz PV (Fotovoltaik) hücre tipini seçiniz. Yanındaki yüzdeler, panelin enerji verimliliğini göstermektedir.</div>
 
         <label id="l2">2) Uygunluk sınıfı</label>
         <select id="classChoice" aria-label="Suitability class selection">
@@ -240,7 +240,7 @@
           <option value="mod">Orta uygun</option>
           <option value="high+mod">Yüksek + Orta uygun</option>
         </select>
-        <div class="help" id="h2">Uygunluk haritasından hangi sınıf(lar)ı “kullanılabilir arazi” olarak alacağımızı belirler.</div>
+        <div class="help" id="h2">Bu parametre, analiz kapsamındaki 'kullanılabilir arazi' eşiğini belirler. Farklı senaryoları test etmek için alt sınıflar eklenebilir, ancak optimizasyon açısından 'Yüksek Uygun' alanlar esastır.</div>
 
         <label id="l3">3) Kurulum oranı</label>
         <div class="rangeBox">
@@ -248,7 +248,7 @@
             <input id="coverage" type="range" min="0" max="30" value="10" />
             <div class="rangeVal"><span id="covLabel">10</span>%</div>
           </div>
-          <div class="help" id="h3">Seçtiğin uygun alanın yüzde kaçına PV kurulacağını varsayar. (0–30% aralığı, gerçekçi senaryo için sınırlandırıldı.)</div>
+          <div class="help" id="h3">Haritada 'uygun' çıkan arazilerin tamamına güneş santrali kurmak, yollar, teknik boşluklar ve maliyet nedeniyle imkansızdır. Bu ayar, uygun alanların sadece belirli bir kısmını değerlendirdiğimiz gerçekçi senaryolar üretir. Tavsiye: Gerçekçi bir sonuç için çubuğu %1 ile %5 arasına getirmeniz önerilir.</div>
         </div>
 
         <div class="stickyBar">
