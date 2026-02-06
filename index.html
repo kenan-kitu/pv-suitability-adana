@@ -211,7 +211,11 @@
   <div class="wrap">
     <div class="topbar">
       <div class="pill"><span class="pillDot"></span><span id="badge">Web Harita</span></div>
-      <button class="langBtn" onclick="openLangModal()" id="langBtn">TR / EN</button>
+      
+      <div style="display:flex; gap:10px;">
+        <button class="langBtn" onclick="openMethodModal()" id="btn_about" style="font-weight:bold;">Proje Detayı</button>
+        <button class="langBtn" onclick="openLangModal()" id="langBtn">TR / EN</button>
+      </div>
     </div>
 
     <h1 id="title">Adana PV Uygunluk & Enerji Potansiyeli</h1>
@@ -343,6 +347,38 @@
     </div>
   </div>
 
+  <div class="modalBackdrop" id="methodModal" style="z-index: 100;">
+    <div class="modal" style="width: min(700px, 95%); max-height: 90vh; overflow-y: auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h2 id="met_title" style="margin:0;">Proje Metodolojisi</h2>
+        <button onclick="closeMethodModal()" style="background:none; border:none; color:var(--muted); font-size:28px; cursor:pointer; line-height:1;">&times;</button>
+      </div>
+      
+      <div style="display:grid; grid-template-columns: 1fr 150px; gap:20px;">
+        <div>
+          <p id="met_desc" style="font-size:14px; color:var(--text); line-height:1.6; margin-top:0;">
+            Bu çalışma, İTÜ Geomatik Müh. Bölümü bitirme projesi kapsamında geliştirilmiştir.
+          </p>
+          <ul id="met_list" style="color:var(--muted); font-size:13px; padding-left:20px; line-height:1.6;">
+            </ul>
+        </div>
+
+        <div style="text-align:center;">
+          <div style="border:1px solid var(--line); border-radius:8px; overflow:hidden; margin-bottom:10px; background:#000;">
+             <img src="poster_thumb.jpg" alt="Poster" style="width:100%; display:block; opacity:0.9;">
+          </div>
+        </div>
+      </div>
+
+      <div class="modalBtns" style="margin-top:20px;">
+        <a href="poster.pdf" target="_blank" class="modalBtn primary" style="text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center;">
+          <span id="btn_poster">Posteri İncele (PDF)</span>
+        </a>
+        <button class="modalBtn" onclick="closeMethodModal()" id="btn_close">Kapat</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     /**
      * ===== UPDATE GIS INPUTS HERE =====
@@ -416,7 +452,15 @@
         class_mod: "Orta uygun",
         class_both: "Yüksek + Orta uygun",
         modalTitle: "Dil Seçimi",
-        modalText: "Lütfen devam etmek için dili seçin."
+        modalText: "Lütfen devam etmek için dili seçin.",
+        // Yeni eklenenler
+        btn_about: "Proje Detayı",
+        met_title: "Proje Metodolojisi",
+        met_desc: "Bu çalışma, İTÜ Geomatik Müh. Bölümü bitirme projesi kapsamında; Adana ili güneş enerjisi potansiyelini AHP ve CBS yöntemleriyle analiz etmek amacıyla geliştirilmiştir.",
+        met_list_1: "Analiz: QGIS ve Python ile Çok Kriterli Karar Analizi (MCDA).",
+        met_list_2: "Kriterler: Eğim, Bakı, Güneşlenme, Arazi Örtüsü, Altyapıya Yakınlık.",
+        btn_poster: "Akademik Posteri Görüntüle (PDF)",
+        btn_close: "Kapat"
       },
       en: {
         pageTitle: "Adana PV Suitability & Energy Potential",
@@ -458,7 +502,15 @@
         class_mod: "Moderately suitable",
         class_both: "Highly + Moderately suitable",
         modalTitle: "Choose Language",
-        modalText: "Please choose a language to continue."
+        modalText: "Please choose a language to continue.",
+        // Yeni eklenenler
+        btn_about: "Project Details",
+        met_title: "Project Methodology",
+        met_desc: "This study was developed within the scope of ITU Geomatics Eng. graduation project to analyze the solar energy potential of Adana using AHP and GIS methods.",
+        met_list_1: "Analysis: Multi-Criteria Decision Analysis (MCDA) via QGIS & Python.",
+        met_list_2: "Criteria: Slope, Aspect, Irradiation, Land Cover, Infrastructure Proximity.",
+        btn_poster: "View Academic Poster (PDF)",
+        btn_close: "Close"
       }
     };
 
@@ -527,6 +579,16 @@
       document.getElementById("m1m").innerText = T.map1Meta;
       document.getElementById("m2h").innerText = T.map2Title;
       document.getElementById("m2m").innerText = T.map2Meta;
+      
+      // Yeni Modal Buton ve İçerik Çevirileri
+      if(document.getElementById("btn_about")){
+        document.getElementById("btn_about").innerText = T.btn_about;
+        document.getElementById("met_title").innerText = T.met_title;
+        document.getElementById("met_desc").innerText = T.met_desc;
+        document.getElementById("btn_poster").innerText = T.btn_poster;
+        document.getElementById("btn_close").innerText = T.btn_close;
+        document.getElementById("met_list").innerHTML = `<li>${T.met_list_1}</li><li>${T.met_list_2}</li>`;
+      }
 
       const classSel = document.getElementById("classChoice");
       classSel.options[0].text = T.class_high;
@@ -575,6 +637,7 @@
       renderAssumptions();
     }
 
+    // Modal Açma/Kapama Fonksiyonları
     function openLangModal(){
       const modal = document.getElementById("langModal");
       modal.style.display = "flex";
@@ -583,6 +646,14 @@
       document.getElementById("m_text").innerText = T.modalText;
     }
     function closeLangModal(){ document.getElementById("langModal").style.display = "none"; }
+    
+    function openMethodModal(){
+      document.getElementById("methodModal").style.display = "flex";
+    }
+    function closeMethodModal(){
+      document.getElementById("methodModal").style.display = "none";
+    }
+
     function setLang(lang){
       localStorage.setItem("pv_lang", lang);
       applyLang(lang);
