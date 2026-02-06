@@ -470,4 +470,247 @@
         k6t: "Tahmini CO₂ azaltımı",
         k6s: "Şebeke emisyon faktörü ile.",
         assT: "Sabit varsayımlar",
-        formT: "Kısa formül
+        formT: "Kısa formül",
+        formulaText: "Enerji (kWh/yıl) = Işınım × Alan × Kurulum Oranı × Panel Verimi × PR",
+        footNote: "Veri kaynakları: CLC2018, ASTER GDEM, Solar Radiation çıktıları. (Akademik çalışma.)",
+        map1Title: "PV Uygunluk Haritası",
+        map1Meta: "Adana",
+        map2Title: "Güneş Işınım Haritası",
+        map2Meta: "kWh/m²/yıl",
+        class_high: "Yüksek uygun",
+        class_mod: "Orta uygun",
+        class_both: "Yüksek + Orta uygun",
+        modalTitle: "Dil Seçimi",
+        modalText: "Lütfen devam etmek için dili seçin.",
+        btn_about: "Proje Detayı",
+        met_title: "Proje Metodolojisi ve Kapsam",
+        met_desc: `Bu çalışma, İTÜ Geomatik Mühendisliği Bölümü <b>CBS Projesi (GIS Project)</b> dersi kapsamında gerçekleştirilmiştir. Adana ilinin güneş enerjisi potansiyeli, <b>Çok Kriterli Karar Verme (MCDM)</b> yöntemleri ve Coğrafi Bilgi Sistemleri (CBS) entegrasyonu ile analiz edilmiştir.
+        <br><br>
+        Analiz sürecinde; güneş radyasyonu, eğim, bakı ve altyapıya yakınlık gibi kritik faktörlerin ağırlıkları <b>Python tabanlı algoritmalar</b> kullanılarak <b>Analitik Hiyerarşi Süreci (AHP)</b> ile hesaplanmıştır.
+        <br><br>
+        Çevresel sürdürülebilirlik ilkesi gereği; 2863 sayılı kanun (Kültür ve Tabiat Varlıkları), orman kanunları ve sulak alanlar gibi yasal kısıtlayıcılar analiz dışı bırakılmıştır. Sonuç haritası, tüm katmanların <b>Ağırlıklı Doğrusal Kombinasyon (WLC)</b> yöntemiyle birleştirilmesi sonucu üretilmiştir.`,
+        btn_poster: "Akademik Posteri Görüntüle (PDF)",
+        btn_close: "Kapat"
+      },
+      en: {
+        pageTitle: "Adana PV Suitability & Energy Potential",
+        pageSubtitle: "This page estimates annual PV electricity generation by assuming what share of the selected suitable land is developed with PV. (Academic, indicative calculation.)",
+        badge: "Web Map",
+        inputsPill: "Your Selections",
+        resultsPill: "Results",
+        mapsPill: "Maps",
+        mapsHelp: "The suitability and solar irradiation maps provide the spatial basis for the calculations below.",
+        l1: "1) PV Technology (efficiency)",
+        h1: "Select the PV technology to be used in the simulation. The percentage values in parentheses represent the conversion efficiency of that technology in electricity generation.",
+        l2: "2) Suitability class",
+        h2: "Determines which suitability classes will be included in the analysis. Note: Options containing 'Moderate' are for scenario testing. 'High Suitability' areas are the primary recommendation for ideal site installation.",
+        l3: "3) Coverage ratio",
+        h3: "It is impossible to install solar plants on all suitable lands due to roads, technical gaps, and costs. This setting creates realistic scenarios by evaluating only a certain portion of suitable areas. Recommendation: Use the 1-5% range for a realistic result.",
+        calcBtn: "Calculate",
+        stickyNote: "Note: These are indicative results; field validation and detailed engineering are required.",
+        k1t: "Selected suitable land",
+        k1s: "Depends on the class selection.",
+        k2t: "PV-developed land",
+        k2s: "After applying the coverage ratio.",
+        k3t: "Solar irradiation used",
+        k3s: "Mean irradiation (kWh/m²/year).",
+        k4t: "Annual electricity generation",
+        k4s: "Using selected technology and PR.",
+        k5t: "Households supplied",
+        k5s: "Based on average household demand.",
+        k6t: "Estimated CO₂ reduction",
+        k6s: "Using grid emission factor.",
+        assT: "Fixed assumptions",
+        formT: "Formula (short)",
+        formulaText: "Energy (kWh/year) = Irradiation × Area × Coverage × Efficiency × PR",
+        footNote: "Data sources: CLC2018, ASTER GDEM, Solar Radiation outputs. (Academic study.)",
+        map1Title: "PV Suitability Map",
+        map1Meta: "Adana",
+        map2Title: "Solar Irradiation Map",
+        map2Meta: "kWh/m²/year",
+        class_high: "Highly suitable",
+        class_mod: "Moderately suitable",
+        class_both: "Highly + Moderately suitable",
+        modalTitle: "Choose Language",
+        modalText: "Please choose a language to continue.",
+        btn_about: "Project Details",
+        met_title: "Project Methodology and Scope",
+        met_desc: `This study was conducted within the scope of the <b>GIS Project</b> course at ITU Geomatics Engineering Department. The solar energy potential of Adana province was evaluated using <b>Multi-Criteria Decision Making (MCDM)</b> methods integrated with Geographic Information Systems (GIS).
+        <br><br>
+        During the analysis process, weights for critical factors such as solar irradiation, slope, aspect, and infrastructure proximity were calculated via the <b>Analytic Hierarchy Process (AHP)</b> using <b>Python-based algorithms</b>.
+        <br><br>
+        In adherence to environmental sustainability and legal standards (e.g., Law No. 2863, forestry laws, and wetlands), sensitive zones were excluded. The final suitability map was generated using the <b>Weighted Linear Combination (WLC)</b> method.`,
+        btn_poster: "View Academic Poster (PDF)",
+        btn_close: "Close"
+      }
+    };
+
+    let CURRENT_LANG = "tr";
+
+    function renderAssumptions(){
+      const pr = FIXED.PR.toFixed(2);
+      const dem = fmt(FIXED.HOUSEHOLD_KWH_YEAR,0);
+      const ef = FIXED.GRID_EF_KGCO2_PER_KWH.toFixed(2);
+      const hh = fmt(FIXED.ADANA_HOUSEHOLDS,0);
+
+      if (CURRENT_LANG === "tr"){
+        document.getElementById("assumptions").innerHTML =
+          `PR = <b>${pr}</b> · Ortalama hane tüketimi = <b>${dem}</b> kWh/hane/yıl · ` +
+          `Şebeke EF = <b>${ef}</b> kgCO₂/kWh · Adana hane sayısı (referans) = <b>${hh}</b>`;
+      } else {
+        document.getElementById("assumptions").innerHTML =
+          `PR = <b>${pr}</b> · Average household demand = <b>${dem}</b> kWh/household/year · ` +
+          `Grid EF = <b>${ef}</b> kgCO₂/kWh · Adana households (reference) = <b>${hh}</b>`;
+      }
+    }
+
+    function applyLang(lang){
+      CURRENT_LANG = lang;
+      document.documentElement.lang = lang === "tr" ? "tr" : "en";
+      const T = I18N[lang];
+
+      document.title = T.pageTitle;
+      document.getElementById("title").innerText = T.pageTitle;
+      document.getElementById("subtitle").innerText = T.pageSubtitle;
+      document.getElementById("badge").innerText = T.badge;
+
+      document.getElementById("inputsPill").innerText = T.inputsPill;
+      document.getElementById("resultsPill").innerText = T.resultsPill;
+      document.getElementById("mapsPill").innerText = T.mapsPill;
+      document.getElementById("mapsHelp").innerText = T.mapsHelp;
+
+      document.getElementById("l1").innerText = T.l1;
+      document.getElementById("h1").innerText = T.h1;
+      document.getElementById("l2").innerText = T.l2;
+      document.getElementById("h2").innerText = T.h2;
+      document.getElementById("l3").innerText = T.l3;
+      document.getElementById("h3").innerText = T.h3;
+      document.getElementById("calcBtn").innerText = T.calcBtn;
+      document.getElementById("stickyNote").innerText = T.stickyNote;
+
+      document.getElementById("k1t").innerText = T.k1t;
+      document.getElementById("k1s").innerText = T.k1s;
+      document.getElementById("k2t").innerText = T.k2t;
+      document.getElementById("k2s").innerText = T.k2s;
+      document.getElementById("k3t").innerText = T.k3t;
+      document.getElementById("k3s").innerText = T.k3s;
+      document.getElementById("k4t").innerText = T.k4t;
+      document.getElementById("k4s").innerText = T.k4s;
+      document.getElementById("k5t").innerText = T.k5t;
+      document.getElementById("k5s").innerText = T.k5s;
+      document.getElementById("k6t").innerText = T.k6t;
+      document.getElementById("k6s").innerText = T.k6s;
+
+      document.getElementById("assT").innerText = T.assT;
+      document.getElementById("formT").innerText = T.formT;
+      document.getElementById("formulaText").innerText = T.formulaText;
+      document.getElementById("footNote").innerText = T.footNote;
+
+      document.getElementById("m1h").innerText = T.map1Title;
+      document.getElementById("m1m").innerText = T.map1Meta;
+      document.getElementById("m2h").innerText = T.map2Title;
+      document.getElementById("m2m").innerText = T.map2Meta;
+      
+      // Modal Buton ve İçerik Çevirileri
+      if(document.getElementById("btn_about")){
+        document.getElementById("btn_about").innerText = T.btn_about;
+        document.getElementById("met_title").innerText = T.met_title;
+        document.getElementById("met_desc").innerHTML = T.met_desc; 
+        document.getElementById("btn_poster").innerText = T.btn_poster;
+        document.getElementById("btn_close").innerText = T.btn_close;
+      }
+
+      const classSel = document.getElementById("classChoice");
+      classSel.options[0].text = T.class_high;
+      classSel.options[1].text = T.class_mod;
+      classSel.options[2].text = T.class_both;
+
+      renderAssumptions();
+    }
+
+    function calculate(){
+      const eff = parseFloat(document.getElementById("tech").value);
+      const choice = document.getElementById("classChoice").value;
+      const cov = parseFloat(document.getElementById("coverage").value) / 100;
+
+      let area_km2 = 0;
+      let sr = 0;
+
+      if (choice === "high"){
+        area_km2 = GIS.A_high_km2;
+        sr = GIS.SR_high_mean;
+      } else if (choice === "mod"){
+        area_km2 = GIS.A_mod_km2;
+        sr = GIS.SR_mod_mean;
+      } else {
+        area_km2 = GIS.A_high_km2 + GIS.A_mod_km2;
+        sr = weightedMeanSR(GIS.A_high_km2, GIS.A_mod_km2, GIS.SR_high_mean, GIS.SR_mod_mean);
+      }
+
+      const area_m2 = km2_to_m2(area_km2);
+      const used_m2 = area_m2 * cov;
+      const energy_kwh = sr * used_m2 * eff * FIXED.PR;
+
+      const households_supplied = energy_kwh / (FIXED.HOUSEHOLD_KWH_YEAR || 1);
+      const pct_of_adana = (households_supplied / (FIXED.ADANA_HOUSEHOLDS || 1)) * 100;
+      const avoided_kg = energy_kwh * FIXED.GRID_EF_KGCO2_PER_KWH;
+
+      document.getElementById("k_area").innerText   = `${fmt(area_km2,2)} km²`;
+      document.getElementById("k_used").innerText   = `${fmt(used_m2,0)} m²`;
+      document.getElementById("k_sr").innerText     = `${fmt(sr,0)} kWh/m²/${CURRENT_LANG === "tr" ? "yıl" : "year"}`;
+      document.getElementById("k_energy").innerText = `${fmt(energy_kwh,0)} kWh/${CURRENT_LANG === "tr" ? "yıl" : "year"}`;
+
+      const hhLabel = CURRENT_LANG === "tr" ? "hane" : "households";
+      document.getElementById("k_house").innerText  = `${fmt(households_supplied,0)} ${hhLabel} (${fmt(pct_of_adana,2)}%)`;
+      document.getElementById("k_co2").innerText    = `${fmt(avoided_kg,0)} kgCO₂/${CURRENT_LANG === "tr" ? "yıl" : "year"}`;
+
+      renderAssumptions();
+    }
+
+    // Modal Açma/Kapama Fonksiyonları
+    function openLangModal(){
+      const modal = document.getElementById("langModal");
+      modal.style.display = "flex";
+      const T = I18N[CURRENT_LANG] || I18N.tr;
+      document.getElementById("m_title").innerText = T.modalTitle;
+      document.getElementById("m_text").innerText = T.modalText;
+    }
+    function closeLangModal(){ document.getElementById("langModal").style.display = "none"; }
+    
+    function openMethodModal(){
+      document.getElementById("methodModal").style.display = "flex";
+    }
+    function closeMethodModal(){
+      document.getElementById("methodModal").style.display = "none";
+    }
+
+    function setLang(lang){
+      localStorage.setItem("pv_lang", lang);
+      applyLang(lang);
+      closeLangModal();
+      calculate();
+    }
+
+    // Live coverage label + auto calculate
+    const covEl = document.getElementById("coverage");
+    const covLabel = document.getElementById("covLabel");
+    covEl.addEventListener("input", () => {
+      covLabel.innerText = covEl.value;
+      calculate();
+    });
+
+    // Boot
+    (function init(){
+      const saved = localStorage.getItem("pv_lang");
+      if (saved === "tr" || saved === "en"){
+        applyLang(saved);
+        calculate();
+      } else {
+        applyLang("tr");
+        calculate();
+        openLangModal();
+      }
+    })();
+  </script>
+</body>
+</html>
