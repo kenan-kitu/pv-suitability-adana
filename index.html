@@ -168,7 +168,7 @@
       z-index:50;
     }
     .modal{
-      width:min(600px, 100%); /* Genişlik biraz artırıldı */
+      width:min(600px, 100%);
       background:linear-gradient(180deg, var(--card) 0%, var(--card2) 100%);
       border:1px solid var(--line);
       border-radius:18px;
@@ -177,7 +177,7 @@
     }
     .modal h2{margin:0 0 12px 0; font-size:20px;}
     .modal p{margin:0 0 14px 0; color:var(--text); font-size:14px; line-height:1.6;}
-    .modalBtns{display:flex; gap:12px; margin-top:24px;} /* Butonlar yan yana */
+    .modalBtns{display:flex; gap:12px; margin-top:24px;}
     .modalBtn{
       flex:1;
       padding:14px;
@@ -195,7 +195,6 @@
       color:var(--btnText);
       border:0;
     }
-    /* Metodoloji listesi için stil */
     .method-list {
       margin: 15px 0; padding-left: 20px; color: var(--muted); font-size: 13px; line-height: 1.6;
     }
@@ -264,7 +263,7 @@
             <div class="rangeVal"><span id="covLabel">10</span>%</div>
           </div>
           <div class="help" id="h3">
-             Haritada 'uygun' çıkan arazilerin tamamına güneş santrali kurmak; yollar, teknik boşluklar ve maliyet nedeniyle imkansızdır. Bu ayar, uygun alanların sadece belirli bir kısmını değerlendirdiğimiz gerçekçi senaryolar üretir. Tavsiye: Gerçekçi bir sonuç için %1 ile %5 aralığını kullanınız.
+              Haritada 'uygun' çıkan arazilerin tamamına güneş santrali kurmak; yollar, teknik boşluklar ve maliyet nedeniyle imkansızdır. Bu ayar, uygun alanların sadece belirli bir kısmını değerlendirdiğimiz gerçekçi senaryolar üretir. Tavsiye: Gerçekçi bir sonuç için %1 ile %5 aralığını kullanınız.
           </div>
         </div>
 
@@ -358,7 +357,13 @@
         </div>
       </div>
     </div>
-  </div>
+    
+    <div style="text-align:center; padding: 20px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 20px;">
+      Developed by <a href="https://www.linkedin.com/in/SENIN-KULLANICI-ADIN/" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;">Kenan (ITU Geomatics)</a>
+      <br>
+      <span style="opacity: 0.7;">Python AHP & GIS MCDM Project</span>
+    </div>
+    </div>
 
   <div class="modalBackdrop" id="methodModal" style="z-index: 100;">
     <div class="modal" style="max-height: 90vh; overflow-y: auto;">
